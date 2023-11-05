@@ -1,0 +1,22 @@
+.instagram-colors {
+    background-color: rgb(193, 53, 132); /* Instagram blue color */
+    color: #ffffff; /* White text color */
+    border: 1px solid #dd2a7b; /* Instagram red color for borders */
+}
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tLmNzcyIsInNvdXJjZXMiOlsiY3VzdG9tLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiJ9 */
+
+/*# sourceMappingURL=custom.css.map */
+
+.centered-element {
+    position: absolute; /* Position the inner element relative to the container */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(
+        -50%,
+        -50%
+    ); /* Move the element back by half of its width and height */
+}
+
+.relative {
+    position: relative;
+}
