@@ -2,22 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Platform;
 use App\Models\Tag;
 use App\Models\Post;
+use App\Repositories\PostsRepository;
 use Illuminate\Http\Request;
 use App\Repositories\UsersRepository;
 use Yajra\DataTables\Facades\DataTables;
 
 class PostsController extends Controller
 {
-    public function index($user_id)
+    public  $postsRepository;
+
+    public function __construct(PostsRepository $postsRepository)
     {
-        $posts = Post::where('user_id', $user_id)->with(['tags', 'user', 'userAccount.platform' => function ($query) {
-            $query->where('name', 'Facebook');
-        }])->get();
+        $this->postsRepository = $postsRepository;
+    }
+    public function index($user_id, $platform_id)
+    {
+        $posts = Post::where('user_id', $user_id)->with('tags', 'user', 'userAccount.platform')->whereHas('userAccount', function ($query) use ($platform_id) {
+            // $query->where('platform_id', Platform::$FACEBOOK);
+            $query->where('platform_id', $platform_id);
+        })->get();
         $groupedPosts  = $posts->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });
+
+
         return view('posts.index', ['groupedPosts' => $groupedPosts]);
     }
 
@@ -28,14 +39,31 @@ class PostsController extends Controller
 
     public function facebookPosts()
     {
-        $posts = Post::with(['tags', 'user', 'userAccount.platform' => function ($query) {
-            $query->where('name', 'Facebook');
-        }])->get();
+        $posts = Post::with('tags', 'user', 'userAccount.platform')
+            ->whereHas('userAccount.platform', function ($query) {
+                $query->where('name', 'Facebook');
+            })
+            ->get();
         $groupedPosts  = $posts->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });
 
         return view('posts.facebook', ['groupedPosts' => $groupedPosts]);
+    }
+
+
+    public function twitterTweets()
+    {
+        $posts = Post::with('tags', 'user', 'userAccount.platform')
+            ->whereHas('userAccount.platform', function ($query) {
+                $query->where('name', 'Twitter');
+            })
+            ->get();
+        $groupedPosts  = $posts->groupBy(function ($post) {
+            return $post->tags->pluck('name')->toArray();
+        });
+
+        return view('posts.twitter', ['groupedPosts' => $groupedPosts]);
     }
 
     public function twitterPosts()
@@ -48,15 +76,8 @@ class PostsController extends Controller
 
     public function userFacebookposts()
     {
-        $posts = Post::where('user_id', auth()->user()->id)->with(['tags', 'user', 'userAccount.platform' => function ($query) {
-            $query->where('name', 'Facebook');
-        }])->get();
-        $groupedPosts  = $posts->groupBy(function ($post) {
-            return $post->tags->pluck('name')->toArray();
-        });
-
-
-        return view('users.posts', ['groupedPosts' => $groupedPosts]);
+        $facebookPosts = $this->postsRepository->getPostAndTweets('Facebook');
+        return view('users.facebook_posts', ['groupedPosts' => $facebookPosts]);
     }
 
     public function syncPosts()
@@ -75,9 +96,7 @@ class PostsController extends Controller
     public function nonCategorizePosts(Request $request)
     {
         $posts = [];
-        $reports = Post::whereNull('category')->with(['tags', 'user', 'userAccount.platform' => function ($query) {
-            $query->where('name', 'Facebook');
-        }]);
+        $reports = Post::whereNull('category')->with('tags', 'user', 'userAccount.platform');
 
         if (!empty($request->user_id)) {
             $reports->where('user_id', $request->user_id);
@@ -90,6 +109,8 @@ class PostsController extends Controller
         if (!empty($request->end_date)) {
             $reports->whereDate('created_at', '<=', $request->end_date);
         }
+
+
 
         $filter = $reports->get();
 
@@ -107,7 +128,7 @@ class PostsController extends Controller
                 'id' => $report->id,
                 'user' => $report->user->name,
                 'post_id' => $report->post_id,
-                'platform' => $report->userAccount->platform->name,
+                'platform' => $report->userAccount->platform?->name,
                 'message' => preg_replace('/#(\w+)/', '', $message),
                 'tags' => $tagsArray,
             ];

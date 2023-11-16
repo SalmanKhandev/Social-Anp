@@ -22,8 +22,15 @@ class HashTagsRepository
         }
     }
 
-    public function trendingPosts($limit = 5)
+    public function facebookTrendingPosts($limit = 5)
     {
         return Tag::withCount('posts')->orderBy('posts_count')->limit($limit)->get();
+    }
+
+    public function twitterTrendingTweets($limit = 5)
+    {
+        return Tag::withCount('posts')->whereHas('posts.userAccount', function ($query) {
+            $query->where('platform_id', 2);
+        })->orderBy('posts_count')->limit(10)->get();
     }
 }

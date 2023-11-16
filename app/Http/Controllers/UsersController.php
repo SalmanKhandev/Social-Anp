@@ -40,10 +40,13 @@ class UsersController extends Controller
 
     public function dashboard()
     {
-        $data['top_users'] = $this->UsersRepository->topUsers();
-        $data['tags'] = $this->tagsRepository->trendingPosts()->groupBy('name');
+        $data['facebook_top_users'] = $this->UsersRepository->FacebookTopUsers();
+        $data['twitter_top_users'] = $this->UsersRepository->twitterTopUsers();
+        $data['facebook_tags'] = $this->tagsRepository->facebookTrendingPosts()->groupBy('name');
+        $data['twitter_tags'] = $this->tagsRepository->twitterTrendingTweets()->groupBy('name');
         return view('users.dashboard', ['data' => $data]);
     }
+
 
     public function register(Request $request)
     {
@@ -113,7 +116,8 @@ class UsersController extends Controller
         $groupedPosts  = $posts->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });
-        $user = User::where('id', $id)->first();
+        $user = User::with('userAccounts')->where('id', $id)->first();
+
         return view('users.show-profile', compact("groupedPosts", "user"));
     }
 

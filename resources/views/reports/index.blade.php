@@ -18,20 +18,24 @@
                   </div>
                   <div class="card-body">
                     <div class="mb-4 row">
-                    <div class="form-group col-md-3">
+                       <div class="form-group col-md-2">
+                            {!! Form::label('search_platform_id', 'Platforms') !!}
+                            {!! Form::select('query[platform_id]', ['' => __('Select Platform')]+$platforms->pluck('name', 'id')->toArray(), (!is_null($query)) ? $query['platform_id'] : null, ['id' => 'platform_id', 'class' => 'form-control refresh']) !!}
+                    </div>
+                    <div class="form-group col-md-2">
                             {!! Form::label('search_role_id', 'Users') !!}
                             {!! Form::select('query[user_id]', ['' => __('Select Users')]+$users->pluck('name', 'id')->toArray(), (!is_null($query)) ? $query['user_id'] : null, ['id' => 'user_id', 'class' => 'form-control refresh']) !!}
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         {!! Form::label('from_date', 'From Date') !!}
                         {!! Form::date('query[from_date]', (!is_null($query)) ? $query['from_date'] : null, ['id' => 'from_date', 'class' => 'form-control refresh']) !!}
                     </div>
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         {!! Form::label('to_date', 'To Date') !!}
                         {!! Form::date('query[to_date]', (!is_null($query)) ? $query['to_date'] : null, ['id' => 'to_date', 'class' => 'form-control refresh']) !!}
                     </div>
-                    <div class="form-group col-md-3" style="margin-top: 30px;">
+                    <div class="form-group col-md-2" style="margin-top: 30px;">
                         <a type="button" class="btn btn-success text-white" id="submit-search">Filter</a>
                         <a type="button" class="btn btn-success text-white" id="clear-filter">Clear</a>
                     </div>
@@ -76,6 +80,7 @@
                         d.user_id = $("#user_id").val(),
                         d.from_date = $("#from_date").val(),
                         d.to_date = $("#to_date").val()
+                        d.platform_id = $("#platform_id").val()
                     }
                 },
         columns: [

@@ -168,7 +168,7 @@
                     </a>
                   </div>
                   <div class="col-6">
-                    <a class="btn btn-block btn-social btn-twitter">
+                    <a href="{{route('twitter.user.login')}}" class="btn btn-block btn-social btn-twitter">
                       <span class="fab fa-twitter"></span> Twitter
                     </a>
                   </div>

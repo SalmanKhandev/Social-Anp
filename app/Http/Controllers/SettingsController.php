@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Platform;
 use App\Models\PostSetting;
 use Illuminate\Http\Request;
 
@@ -14,5 +15,10 @@ class SettingsController extends Controller
         if ($setDate) {
             return response()->json(['status' => true, 'message' => 'Next Posts deletion Date Fixed successfully']);
         }
+    }
+
+    public function platforms()
+    {
+        return Platform::all();
     }
 }

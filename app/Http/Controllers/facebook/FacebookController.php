@@ -33,8 +33,8 @@ class FacebookController extends Controller
     public function handleFacebookCallback(Request $request)
     {
         $user = Socialite::driver('facebook')->user();
-        $profilePictureUrl = $this->getAvatar($user->token);
 
+        $profilePictureUrl = $this->getAvatar($user->token);
         // Fetch the user's profile picture using the Facebook Graph API
         $accessToken = "EAAD9Hh3uyzYBO99sjS62wZBCeofbRghOsQPU4sApvDCzNyct9rKZBr2KtZBQTYJWkAYGu6939Gv28oFcq2Q1TeTL68cNyVY4crZA2iLgdQyKZCR18GkVo06wOt2NOgW3r72z1Ga7gTpC9p9ZB3ac5shmp3vgnw4pFWsc4pNQ7vkGZBxl1NCZC46ZA49yBs99QJaoXqBCycR8adBo783PEeGMQMMPaQHcxRY9aSEjwZAzetJp3aia6z";
         $appSecret = config('services.facebook.client_secret'); // Get your Facebook app secret from config

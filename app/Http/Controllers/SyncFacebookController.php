@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 
 class SyncFacebookController extends Controller
 {
-    public $syncRepository;
-    public function __construct(SyncRepository $syncRepository)
+    public $facebookSyncRepository;
+    public function __construct(SyncRepository $facebookSyncRepository)
     {
-        $this->syncRepository = $syncRepository;
+        $this->facebookSyncRepository = $facebookSyncRepository;
     }
     public function syncFacebookPosts()
     {
-        $syncFacebook = $this->syncRepository->syncFacebook();
+        $syncFacebook = $this->facebookSyncRepository->syncFacebook();
         return response()->json(['success' => true, 'message' => 'Facebook Posts Sync  successfully']);
     }
 }

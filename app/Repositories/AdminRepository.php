@@ -40,7 +40,7 @@ class AdminRepository
     public function deleteAdmin($request)
     {
         $admin = User::find($request['id']);
-        $admin->delete();
+        $admin->syncRoles(['User']);
         return true;
     }
 }

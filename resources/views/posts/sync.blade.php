@@ -66,7 +66,7 @@
                                                             <div class="col-12">
 
                                                                     <a href="#"
-                                                                        class="btn btn-icon icon-left btn-primary rounded-sm"
+                                                                        class="btn btn-icon syncTwitter icon-left btn-primary rounded-sm"
                                                                         type="button" id="syncAdmins"><i
                                                                             class="fas fa-sync"></i>Full Sync Twitter</a>
 
@@ -441,8 +441,9 @@
             }
         });
 
+
+// Sync Facebook Posts 
   $(".syncFacebook").click(function(){
-    console.log("Working");
     var url='{{ route("sync.facebook.posts") }}';
     Swal.fire({
     title: 'Are You Sure ?',
@@ -476,10 +477,46 @@
         },
     });
     }
-});
+    }); 
+  });
 
 
-      
+
+  // Sync Twitter Tweets 
+  $(".syncTwitter").click(function(){
+    var url='{{ route("sync.twitter.tweets") }}';
+    Swal.fire({
+    title: 'Are You Sure ?',
+    text: "You want to Sync Twitter Tweets",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+    cancelButtonText:'Cancel',
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+        type: 'POST',
+        url: url,
+        data: {},
+        beforeSend: function () {
+            showLoader()
+        },
+        success: function(response)
+        {
+            if(response.success){
+                showSwalMessage('success', 'Success', response.message)
+            }else{
+                showSwalMessage('error', "Error", response.message)
+            }
+        },
+        complete: function () {
+            hideLoader()
+        },
+    });
+    }
+    }); 
   });
 
 });

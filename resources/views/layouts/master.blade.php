@@ -48,8 +48,12 @@
           @can('sync facebook')
            <div>
              <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncFacebook" type="button">
+              
             <i class="fas fa-sync"></i>Facebook</a>
-             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncFacebook" type="button">
+             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncTwitter" type="button">
+              
+            <i class="fas fa-sync"></i>Twitter </a>
+             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="" type="button">
               @php
                 $latest = \App\Models\Setting::latest()->first();
                 $date = \Carbon\Carbon::parse($latest->sync_date);
@@ -121,9 +125,9 @@
               <a href="{{route('facebook.posts')}}" class=" nav-link"><i
                   data-feather="facebook"></i><span>Facebook Posts</span></a>
             </li>
-              <li class="dropdown {{request()->routeIs('twitter.posts') ? 'active' : ''}}">
-              <a href="#" class=" nav-link"><i
-                  data-feather="twitter"></i><span>Twitter Posts</span></a>
+              <li class="dropdown {{request()->routeIs('twitter.tweets') ? 'active' : ''}}">
+              <a href="{{route('twitter.tweets')}}" class=" nav-link"><i
+                  data-feather="twitter"></i><span>Twitter Tweets</span></a>
             </li>
               <li class="dropdown {{request()->routeIs('instagram.posts') ? 'active' : ''}}">
               <a href="#" class=" nav-link"><i
@@ -141,8 +145,14 @@
             @can('view own posts')
             <li class="dropdown {{request()->routeIs('user.facebook.posts') ? 'active' : ''}}">
               <a href="{{route('user.facebook.posts')}}" class=" nav-link"><i
-                  data-feather="book"></i><span>Facebook Posts</span></a>
+                  data-feather="facebook"></i><span>Facebook Posts</span></a>
             </li>
+              <li class="dropdown {{request()->routeIs('name.twitter.tweets') ? 'active' : ''}}">
+              <a href="{{route('name.twitter.tweets')}}" class=" nav-link"><i
+                  data-feather="twitter"></i><span>Twitter Tweets</span></a>
+            </li>
+
+
             @endcan
 
             @can('sync facebook')
@@ -374,9 +384,47 @@
     }
 });
 
+});
 
-      
+
+
+// Sync Twitter Tweets 
+$("#syncTwitter").click(function(){
+    var url='{{ route("sync.twitter.tweets") }}';
+    Swal.fire({
+    title: 'Are You Sure ?',
+    text: "You want to Sync Twitter Tweets",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+    cancelButtonText:'Cancel',
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+        type: 'POST',
+        url: url,
+        data: {},
+        beforeSend: function () {
+            showLoader()
+        },
+        success: function(response)
+        {
+            if(response.success){
+                showSwalMessage('success', 'Success', response.message)
+            }else{
+                showSwalMessage('error', "Error", response.message)
+            }
+        },
+        complete: function () {
+            hideLoader()
+        },
+    });
+    }
+    }); 
   });
+
 
 });
 

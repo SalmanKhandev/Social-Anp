@@ -79,4 +79,18 @@ class PostsRepository
         $finalData = array_values($formattedData);
         return $finalData;
     }
+
+    public function getPostAndTweets($platform)
+    {
+        $posts = Post::where('user_id', auth()->user()->id)
+            ->with(['tags', 'user', 'userAccount.platform'])
+            ->whereHas('userAccount.platform', function ($query) use ($platform) {
+                $query->where('name', $platform);
+            })
+            ->get();
+        $groupedPosts = $posts->groupBy(function ($post) {
+            return $post->tags->pluck('name')->toArray();
+        });
+        return $groupedPosts;
+    }
 }

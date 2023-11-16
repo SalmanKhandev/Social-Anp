@@ -6,16 +6,23 @@ use Carbon\Carbon;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Repositories\PostsRepository;
+use App\Repositories\SettingsRepository;
 use App\Repositories\UsersRepository;
 use Yajra\DataTables\Facades\DataTables;
 
 class ReportsController extends Controller
 {
+    public $settingsRepository;
+    public function __construct(SettingsRepository $settingsRepository)
+    {
+        $this->settingsRepository = $settingsRepository;
+    }
     public function index(Request $request)
     {
         return view('reports.index', [
             'query' => $request->has('query') ? $request->get('query') : null,
             'users' => (new UsersRepository)->all(),
+            'platforms' => $this->settingsRepository->platforms()
         ]);
     }
 
@@ -23,9 +30,8 @@ class ReportsController extends Controller
     {
 
         $posts = [];
-        $reports = Post::with(['tags', 'user', 'userAccount.platform' => function ($query) {
-            $query->where('name', 'Facebook');
-        }]);
+        $reports = Post::query();
+        $reports->with('tags', 'user', 'userAccount.platform');
 
         if (!empty($request->user_id)) {
             $reports->where('user_id', $request->user_id);
@@ -39,13 +45,18 @@ class ReportsController extends Controller
             $reports->whereDate('created_at', '<=', $request->end_date);
         }
 
+        if (!empty($request->platform_id)) {
+            $reports->whereHas('userAccount', function ($query) use ($request) {
+                $query->where('platform_id', $request->platform_id);
+            });
+        }
+
         $filter = $reports->get();
 
 
         foreach ($filter as $report) {
             $content = json_decode($report->content);
-            $message = isset($content->message) ? $content->message : 'Not Available';
-
+            $message = isset($content->message) ? $content->message : (isset($content->text) ? $content->text : 'Not Available');
             $tagsArray = [];
             foreach ($report->tags as $tag) {
                 $tagsArray[] = $tag->name;

@@ -26,17 +26,33 @@ class UsersRepository
         return User::find($id);
     }
 
-    public function topUsers($limit = 10)
+    public function facebooKTopUsers($limit = 10)
     {
         $topUsers = User::withCount('posts')
+            ->whereHas('userAccounts', function ($query) {
+                $query->where('platform_id', 1);
+            })
+            ->having('posts_count', '>', 0)
             ->orderByDesc('posts_count')
             ->limit($limit)
-            ->get()->filter(function ($user) {
-                return $user->posts_count > 0;
-            });
+            ->get();
+
         return $topUsers;
     }
 
+    public function twitterTopUsers($limit = 10)
+    {
+        $topUsers = User::withCount('posts')
+            ->whereHas('userAccounts', function ($query) {
+                $query->where('platform_id', 2);
+            })
+            ->having('posts_count', '>', 0)
+            ->orderByDesc('posts_count')
+            ->limit($limit)
+            ->get();
+
+        return $topUsers;
+    }
     public function thankYou($userId)
     {
         $user = $this->findUserById($userId);

@@ -6,8 +6,10 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\TestingController;
+use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SyncTwitterController;
 use App\Http\Controllers\SyncFacebookController;
 use App\Http\Controllers\facebook\FacebookController;
 
@@ -66,13 +68,14 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     });
     // Posts Routes 
     Route::prefix('posts')->group(function () { // Use Route::group for nesting
-        Route::get("/{user_id}", [PostsController::class, "index"])->name("dashboard.posts.all");
+        Route::get("/{user_id}/{platform_id}", [PostsController::class, "index"])->name("dashboard.posts.all");
     });
     Route::get("/categorize", [PostsController::class, "categorizePosts"])->name("dashboard.posts.categorize");
 
     // Sync Routes 
     Route::prefix('sync')->group(function () { // Use Route::group for nesting
         Route::post("/facebook_sync", [SyncFacebookController::class, "syncFacebookPosts"])->name("sync.facebook.posts");
+        Route::post('/twitter_sync', [SyncTwitterController::class, "syncTwitterTweets"])->name("sync.twitter.tweets");
     });
 
 
@@ -83,7 +86,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     });
 
     Route::get("/all", [PostsController::class, "facebookPosts"])->name("facebook.posts");
+    Route::get("/all_twitter_tweets", [PostsController::class, "twitterTweets"])->name("twitter.tweets");
     Route::get("/user_posts", [PostsController::class, "userFacebookposts"])->name("user.facebook.posts");
+    Route::get("/user_tweets", [TwitterController::class, "userTwitterTweets"])->name("name.twitter.tweets");
     Route::get("/twitter", [PostsController::class, "twitterPosts"])->name("twitter.posts");
     Route::get("/instagram", [PostsController::class, "instagramPosts"])->name("instagram.posts");
     Route::get("/sync", [PostsController::class, "syncPosts"])->name("dashboard.posts.sync");
@@ -96,3 +101,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
 Auth::routes(['register' => false]);
 Route::get('/register_user', [UsersController::class, 'registerForm'])->name('user.register.form');
+Route::get('/auth/twitter', [TwitterController::class, 'redirectToTwitter'])->name('twitter.user.login');
+Route::get('/auth/twitter/callback', [TwitterController::class, 'handleTwitterCallback']);
+Route::get('/get-user-tweets', [TwitterController::class, 'getUserTweets'])->name('user.tweets');
