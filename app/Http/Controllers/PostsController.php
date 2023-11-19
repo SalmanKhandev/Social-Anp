@@ -55,13 +55,13 @@ class PostsController extends Controller
         $posts = Post::with('tags', 'user', 'userAccount.platform')
             ->whereHas('userAccount.platform', function ($query) {
                 $query->where('name', 'Twitter');
-            })
-            ->get();
-        $groupedPosts  = $posts->groupBy(function ($post) {
+            });
+        $groupedPosts  = $posts->get()->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });
 
-        return view('posts.twitter', ['groupedPosts' => $groupedPosts]);
+        $allTweets = $posts->paginate(20);
+        return view('posts.twitter', ['allTweets' => $allTweets, 'groupedPosts' => $groupedPosts]);
     }
 
     public function twitterPosts()
