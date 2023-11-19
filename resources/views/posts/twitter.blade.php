@@ -41,14 +41,16 @@
                                 </tr>
                             </thead>
                             <tbody>
+                              @php
+                                  $index = 1;
+                              @endphp
                              @foreach($allTweets as $key=> $post)
-                             
+                                  
                                 @php
                                 $content = json_decode($post->content);
-                                $index = 0;
                                 @endphp
                                 <tr>
-                                <th scope="row">{{$index+1}}</th>
+                                <th scope="row">{{$index++}}</th>
                                 <td>{{$post->user->name}}</td>
                                 <td>
                                 <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="70"
@@ -80,6 +82,9 @@
                                 </div>
                             </div>
 
+                @php
+                    $key = 1;
+                @endphp
                @foreach($groupedPosts as $index => $tags)
                   @php
                   @endphp
@@ -106,7 +111,7 @@
                                 $content = json_decode($post->content);
                                 @endphp
                                 <tr>
-                                <th scope="row">1</th>
+                                <th scope="row">{{$key+1}}</th>
                                 <td>{{$post->user->name}}</td>
                                 <td>
                                 <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="50"
