@@ -41,21 +41,12 @@ class PostsController extends Controller
         $posts = Post::with('tags', 'user', 'userAccount.platform')
             ->whereHas('userAccount.platform', function ($query) {
                 $query->where('name', 'Facebook');
-            })
-            ->get();
-        $groupedPosts  = $posts->groupBy(function ($post) {
+            });
+        $groupedPosts  = $posts->get()->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });
-
-        $allPosts = Post::with('tags', 'user', 'userAccount.platform')
-            ->whereHas('userAccount.platform', function ($query) {
-                $query->where('name', 'Facebook');
-            })
-            ->paginate(30);
-
-
-
-        return view('posts.facebook', ['allPosts' => $allPosts, 'posts' => $posts, 'groupedPosts' => $groupedPosts]);
+        $allPosts = $posts->paginate(20);
+        return view('posts.facebook', ['allPosts' => $allPosts, 'groupedPosts' => $groupedPosts]);
     }
 
 
