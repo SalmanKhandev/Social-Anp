@@ -28,7 +28,6 @@ class PostsController extends Controller
             return $post->tags->pluck('name')->toArray();
         });
 
-
         return view('posts.index', ['groupedPosts' => $groupedPosts]);
     }
 
@@ -48,7 +47,15 @@ class PostsController extends Controller
             return $post->tags->pluck('name')->toArray();
         });
 
-        return view('posts.facebook', ['groupedPosts' => $groupedPosts]);
+        $allPosts = Post::with('tags', 'user', 'userAccount.platform')
+            ->whereHas('userAccount.platform', function ($query) {
+                $query->where('name', 'Facebook');
+            })
+            ->paginate(30);
+
+
+
+        return view('posts.facebook', ['allPosts' => $allPosts, 'posts' => $posts, 'groupedPosts' => $groupedPosts]);
     }
 
 
