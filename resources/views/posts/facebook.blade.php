@@ -105,7 +105,7 @@
                             <!-- Add an "All Posts" tab without a tag filter -->
                             <li class="nav-item">
                                 <a class="nav-link active" id="all-tab" data-toggle="tab" href="#all" role="tab"
-                                    aria-controls="all" aria-selected="true">All Posts</a>
+                                    aria-controls="all" aria-selected="true">#All</a>
                             </li>
                             @foreach($groupedPosts as $index => $tags)
                                 <li class="nav-item">
