@@ -32,8 +32,8 @@ class DashboardController extends Controller
         $data['instagram'] = $this->postsRepository->getPostsByPlatform('Instagram');
         $data['facebook_top_users'] =  $this->UsersRepository->facebooKTopUsers();
         $data['twitter_top_users'] =  $this->UsersRepository->twitterTopUsers();
-        $data['facebook_trending_tags'] = $this->tagsRepository->facebookTrendingPosts()->groupBy('name');
-        $data['twitter_trending_tags'] = $this->tagsRepository->twitterTrendingTweets()->groupBy('name');
+        $data['facebook_trending_tags'] = $this->tagsRepository->facebookTrendingPosts()->where('posts_count', '>', 0)->groupBy('name');
+        $data['twitter_trending_tags'] = $this->tagsRepository->twitterTrendingTweets()->where('posts_count', '>', 0)->groupBy('name');
         $data['chart_data'] = $this->postsRepository->chartData();
         return view('dashboard.index', ['data' => $data]);
     }

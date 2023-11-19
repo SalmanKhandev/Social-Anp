@@ -45,9 +45,10 @@
                              
                                 @php
                                 $content = json_decode($post->content);
+                                $index = 0;
                                 @endphp
                                 <tr>
-                                <th scope="row">1</th>
+                                <th scope="row">{{$index+1}}</th>
                                 <td>{{$post->user->name}}</td>
                                 <td>
                                 <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="70"

@@ -42,8 +42,8 @@ class UsersController extends Controller
     {
         $data['facebook_top_users'] = $this->UsersRepository->FacebookTopUsers();
         $data['twitter_top_users'] = $this->UsersRepository->twitterTopUsers();
-        $data['facebook_tags'] = $this->tagsRepository->facebookTrendingPosts()->groupBy('name');
-        $data['twitter_tags'] = $this->tagsRepository->twitterTrendingTweets()->groupBy('name');
+        $data['facebook_tags'] = $this->tagsRepository->facebookTrendingPosts()->where('posts_count', '>', 0)->groupBy('name');
+        $data['twitter_tags'] = $this->tagsRepository->twitterTrendingTweets()->where('posts_count', '>', 0)->groupBy('name');
         return view('users.dashboard', ['data' => $data]);
     }
 
