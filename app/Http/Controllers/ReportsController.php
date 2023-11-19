@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Post;
+use App\Repositories\HashTagsRepository;
 use Illuminate\Http\Request;
 use App\Repositories\PostsRepository;
 use App\Repositories\SettingsRepository;
@@ -22,6 +23,7 @@ class ReportsController extends Controller
         return view('reports.index', [
             'query' => $request->has('query') ? $request->get('query') : null,
             'users' => (new UsersRepository)->all(),
+            'tags' => (new HashTagsRepository)->all(),
             'platforms' => $this->settingsRepository->platforms()
         ]);
     }
@@ -51,6 +53,16 @@ class ReportsController extends Controller
             });
         }
 
+        if (!empty($request->category)) {
+            $reports->where('category', $request->category);
+        }
+
+        if (!empty($request->tag)) {
+            $reports->whereHas('tags', function ($query) use ($request) {
+                $query->where('id', $request->tag);
+            });
+        }
+
         $filter = $reports->get();
 
 
@@ -65,6 +77,7 @@ class ReportsController extends Controller
             $posts[] = [
                 'user' => $report->user->name,
                 'post_id' => $report->post_id,
+                'category' => $report->category ? $report->category : 'Not Specified',
                 'platform' => $report->userAccount->platform->name,
                 'message' => preg_replace('/#(\w+)/', '', $message),
                 'tags' => $tagsArray,

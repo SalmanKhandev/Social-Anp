@@ -30,6 +30,16 @@
                         {!! Form::label('from_date', 'From Date') !!}
                         {!! Form::date('query[from_date]', (!is_null($query)) ? $query['from_date'] : null, ['id' => 'from_date', 'class' => 'form-control refresh']) !!}
                     </div>
+                    <div class="form-group col-md-2">
+                      {!! Form::label('category', 'Category') !!}
+                      {!! Form::select('category', ['' => 'Select Category', 'Personal' => 'Personal', 'Political' => 'Political'], null, ['id' => 'category', 'class' => 'form-control']) !!}
+                  </div>
+                    
+                   <div class="form-group col-md-2">
+                      {!! Form::label('Tags', 'Select Tags') !!}
+                      {!! Form::select('Tags', ['' => 'Select Hashtags']+$tags->pluck('name','id')->toArray(), null, ['id' => 'tag', 'class' => 'form-control']) !!}
+                  </div>
+
 
                     <div class="form-group col-md-2">
                         {!! Form::label('to_date', 'To Date') !!}
@@ -47,6 +57,7 @@
                             <th>User</th>
                             <th>Platform</th>
                             <th>Post ID</th>
+                            <th>Category</th>
                             <th>Message</th>
                             <th>Tags</th>
                             <th>Date</th>
@@ -81,6 +92,8 @@
                         d.from_date = $("#from_date").val(),
                         d.to_date = $("#to_date").val()
                         d.platform_id = $("#platform_id").val()
+                        d.category = $("#category").val()
+                        d.tag = $("#tag").val()
                     }
                 },
         columns: [
@@ -101,10 +114,15 @@
                     return data; // For other types (sorting, type, etc.)
                 }
             },
+              {
+                data: 'category',
+                name: 'Category'
+            },
             {
                 data: 'message',
                 name: 'Message'
             },
+            
             {
                 data: 'tags',
                 "render": function (data, type, row) {

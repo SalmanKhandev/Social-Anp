@@ -22,6 +22,11 @@ class HashTagsRepository
         }
     }
 
+    public function all()
+    {
+        return Tag::all();
+    }
+
     public function facebookTrendingPosts($limit = 5)
     {
         return Tag::withCount('posts')->orderBy('posts_count')->limit($limit)->get();

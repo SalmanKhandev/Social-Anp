@@ -20,16 +20,61 @@ class TestingController extends Controller
 {
     public function index()
     {
-        // $data =  (new SyncRepository)->getUserFacebooksPosts('1739169136524225', 'EAAD9Hh3uyzYBO3Ai9CaucsClu43rAWKVLdHfuCrHJkMTqLZBqQ0l4f3QNoXW6TR9p5lL2IRMx948qHE2ZB7tp1UHPb8JVT2JoZAuZC5sZB5KArBv0IPpOZBpZBXRLAG6gWvYrsiaADaOTZAQ3tgw4Y2ZA1ldaaZCZBhZA7pNWuOpjaoMJf31yU3ECrd3FjANEIOKQCx5F2Nk4rk92A3pFUUtcG2OOn4ZAd7LrexAA6NKnHZAGBmVMZB6A4b');
-        // dd($data);
+        $posts = [];
+        $reports = Post::query();
+        $reports->with('tags', 'user', 'userAccount.platform');
 
-        try {
-            $url = "https://graph.facebook.com/v12.0/1533946880754850/posts?access_token=" . urlencode("EAAD9Hh3uyzYBO3x8wHqezyAb4ANZAEbHHdmj6mz1RVQbVhT07k11N2M3S47mSXWZBBU09swQR4cOBiVoEZBjons6KvJxe1egVGhAVeZCBFyqAZBw0Hl0hhZAXvQD4P1LjU2AhfAEnyY7rfZBipFcsLMjWYicj9ixZCfZBKYSrZCikIoVFVELFBP0Ot3VJ5ju3SWiYUjnihRiAu1JqaTs86iASmb1o00piZBxSmw2Yh06DwJrnjWg0rb");
-            $data = Http::get($url);
-            $response = $data->json();
-            dd($response);
-        } catch (\Throwable $th) {
-            dd($th->getMessage());
+        $tag = 124;
+        $request = request();
+        if (!empty($request->user_id)) {
+            $reports->where('user_id', $request->user_id);
+        }
+
+        if (!empty($request->from_date)) {
+            $reports->whereDate('created_at', '>=', $request->from_date);
+        }
+
+        if (!empty($request->end_date)) {
+            $reports->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        if (!empty($request->platform_id)) {
+            $reports->whereHas('userAccount', function ($query) use ($request) {
+                $query->where('platform_id', $request->platform_id);
+            });
+        }
+
+        if (!empty($request->category)) {
+            $reports->where('category', $request->category);
+        }
+
+        if (!empty($request->tag)) {
+            $reports->whereHas('tags', function ($query) use ($request) {
+                $query->where('id', $request->tag);
+            });
+        }
+
+
+        $filter = $reports->get();
+
+
+        foreach ($filter as $report) {
+            $content = json_decode($report->content);
+            $message = isset($content->message) ? $content->message : (isset($content->text) ? $content->text : 'Not Available');
+            $tagsArray = [];
+            foreach ($report->tags as $tag) {
+                $tagsArray[] = $tag->name;
+            }
+
+            $posts[] = [
+                'user' => $report->user->name,
+                'post_id' => $report->post_id,
+                'category' => $report->category ? $report->category : 'Not Specified',
+                'platform' => $report->userAccount->platform->name,
+                'message' => preg_replace('/#(\w+)/', '', $message),
+                'tags' => $tagsArray,
+                'created_at' => $report->updated_at->format('d/m/Y H:i:s a')
+            ];
         }
     }
 }
