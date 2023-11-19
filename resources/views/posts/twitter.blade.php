@@ -108,7 +108,7 @@
                                 <th scope="row">1</th>
                                 <td>{{$post->user->name}}</td>
                                 <td>
-                                <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="70"
+                                <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="50"
                                     data-toggle="tooltip" title="{{$post->user->name}}">
                                 </td>
                                 <td><a href="https://twitter.com/HaseebJanHamraz/status/{{$content->id}}" target="_blank">{{$post->post_id}}</a></td>
