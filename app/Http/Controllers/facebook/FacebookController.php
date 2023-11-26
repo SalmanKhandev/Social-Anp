@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Repositories\PostsRepository;
+use App\Repositories\UsersRepository;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\HashTagsRepository;
 use Laravel\Socialite\Facades\Socialite;
@@ -86,6 +87,9 @@ class FacebookController extends Controller
         }
 
         Auth::loginUsingId($createUser->id);
+        $findUser = (new UsersRepository)->findUserById(auth()->user()->id);
+        $findUser->twitter_connected = true;
+        $findUser->save();
         session()->forget('user');
         return redirect()->route('users.dashboard');
     }

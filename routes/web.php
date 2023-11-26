@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\SignUpController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SyncTwitterController;
+use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\SyncFacebookController;
 use App\Http\Controllers\facebook\FacebookController;
 
@@ -104,3 +106,6 @@ Route::get('/register_user', [UsersController::class, 'registerForm'])->name('us
 Route::get('/auth/twitter', [TwitterController::class, 'redirectToTwitter'])->name('twitter.user.login');
 Route::get('/auth/twitter/callback', [TwitterController::class, 'handleTwitterCallback']);
 Route::get('/get-user-tweets', [TwitterController::class, 'getUserTweets'])->name('user.tweets');
+Route::get('/facebook/page/{pageId}', [FacebookPageController::class, 'getPageData']);
+Route::get('/signup', [SignUpController::class, 'signUp'])->name('user.signup');
+Route::post('/signup_user', [SignUpController::class, 'signupUser'])->name('user.create.account');

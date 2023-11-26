@@ -82,4 +82,21 @@ class UsersRepository
         $user->save();
         return $user;
     }
+
+    public function registerUser($data)
+    {
+        $user = User::create([
+            'name' => $data['full_name'],
+            'email' => $data['email'],
+            'dob'   => $data['dob'],
+            'password' => bcrypt($data['password']),
+            'contact_number' => $data['contact_number'],
+            'designation' => $data['designation'],
+            'about' => $data['about'],
+            'address' => $data['address'],
+            'residence' => $data['residence'],
+        ]);
+        $user->assignRole('User');
+        return $user;
+    }
 }

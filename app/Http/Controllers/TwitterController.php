@@ -10,16 +10,19 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\PostsRepository;
 use Abraham\TwitterOAuth\TwitterOAuth;
 use App\Repositories\TwitterRepository;
+use App\Repositories\UsersRepository;
 use Laravel\Socialite\Facades\Socialite;
 
 class TwitterController extends Controller
 {
     public $twitterRepository;
     public $postsRepository;
-    public function __construct(TwitterRepository $twitterRepository, PostsRepository $postsRepository)
+    public $usersRepository;
+    public function __construct(TwitterRepository $twitterRepository, PostsRepository $postsRepository, UsersRepository $usersRepository)
     {
         $this->twitterRepository = $twitterRepository;
         $this->postsRepository = $postsRepository;
+        $this->usersRepository = $usersRepository;
     }
 
     public function redirectToTwitter()
@@ -59,10 +62,24 @@ class TwitterController extends Controller
                     'content' => json_encode($userPost)
                 ]);
             }
-            return response()->json(['success' => true, 'message' => 'Users Tweets Saved Successfully']);
-        } else {
-            return response()->json(['success' => true, 'message' => 'Users Tweets Saved Successfully']);
+            // return response()->json(['success' => true, 'message' => 'Users Tweets Saved Successfully']);
         }
+
+        if (!$createUser->password) {
+            session(['user' => $createUser]);
+            return redirect()->route('user.register.form');
+        }
+
+        if ($createUser->status == 0) {
+            return redirect()->route('login')->with('message', 'Your Account is not approved yet Please wait!');
+        }
+
+        Auth::loginUsingId($createUser->id);
+        $findUser = $this->usersRepository->findUserById(auth()->user()->id);
+        $findUser->twitter_connected = true;
+        $findUser->save();
+        session()->forget('user');
+        return redirect()->route('users.dashboard')->with('message', 'Your Twitter is Connected!');
     }
 
     public function getUserTweets()

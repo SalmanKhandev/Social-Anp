@@ -3,6 +3,47 @@
 @section('content')
 <section class="section">
 <div class="row">
+<div class="col-md-5">
+@if(session()->has('message'))
+    <div class="alert alert-success">
+        {{ session()->get('message') }}
+    </div>
+@endif
+</div>
+</div>
+@if(!auth()->user()->facebook_connected || !auth()->user()->twitter_connected)
+<div class="row">
+<div class="col-md-5">
+     <div class="alert alert-danger alert-dismissible show fade">
+    <div class="alert-body">
+    <button class="close" data-dismiss="alert">
+        <span>&times;</span>
+    </button>
+         Your Social accounts are not connected Please Connect them !
+</div>
+</div>
+</div>
+</div>
+@endif
+<div class="row">
+<div class="col-2">
+    <a href="{{ url('/auth/facebook') }}" class="btn btn-block btn-social btn-facebook">
+        <span class="fab fa-facebook"></span>Connect Facebook
+    </a>
+    </div>
+@if(!auth()->user()->twitter_connected)
+<div class="col-2">
+<a href="{{route('twitter.user.login')}}" class="btn btn-block btn-social btn-twitter">
+    <span class="fab fa-twitter"></span> Connect Twitter
+</a>
+</div>
+@endif
+</div>
+<br>
+<br>
+<br>
+
+<div class="row">
 <div class="col-md-6 col-lg-12 col-xl-6">
     <!-- Support tickets -->
     <div class="card">
