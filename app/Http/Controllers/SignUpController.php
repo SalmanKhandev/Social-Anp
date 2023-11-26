@@ -41,7 +41,7 @@ class SignUpController extends Controller
 
         $registerUser = $this->userRepository->registerUser($request);
         if ($registerUser) {
-            return redirect()->route('login')->with('message', 'You are registered successfully please wait until Admin approve your account !');
+            return redirect()->route('users.dashboard')->with('message', 'You are registered successfully please wait until Admin approve your account !');
         }
     }
 }

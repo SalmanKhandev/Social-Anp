@@ -63,9 +63,9 @@ class TwitterController extends Controller
             return redirect()->route('user.register.form');
         }
 
-        if ($createUser->status == 0) {
-            return redirect()->route('login')->with('message', 'Your Account is not approved yet Please wait!');
-        }
+        // if ($createUser->status == 0) {
+        //     return redirect()->route('login')->with('message', 'Your Account is not approved yet Please wait!');
+        // }
 
         Auth::loginUsingId($createUser->id);
         $findUser = $this->usersRepository->findUserById(auth()->user()->id);
