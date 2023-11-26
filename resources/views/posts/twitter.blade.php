@@ -94,7 +94,6 @@
                             <table class="table">
                             <thead>
                                 <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Avatar</th>
                                 <th scope="col">Tweet Id</th>
@@ -111,7 +110,6 @@
                                 $content = json_decode($post->content);
                                 @endphp
                                 <tr>
-                                <th scope="row">{{$key+1}}</th>
                                 <td>{{$post->user->name}}</td>
                                 <td>
                                 <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="50"

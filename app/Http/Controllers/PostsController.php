@@ -94,7 +94,7 @@ class PostsController extends Controller
     public function nonCategorizePosts(Request $request)
     {
         $posts = [];
-        $reports = Post::whereNull('category')->with('tags', 'user', 'userAccount.platform');
+        $reports = Post::orderBy('id', 'DESC')->whereNull('category')->with('tags', 'user', 'userAccount.platform');
 
         if (!empty($request->user_id)) {
             $reports->where('user_id', $request->user_id);

@@ -118,7 +118,7 @@
             },
         ],
         rowCallback: function(row, data) {
-            console.log(data);
+            console.log("data",data);
           
                 }
     });

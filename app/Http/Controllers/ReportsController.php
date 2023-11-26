@@ -63,7 +63,7 @@ class ReportsController extends Controller
             });
         }
 
-        $filter = $reports->get();
+        $filter = $reports->orderBy('id', 'DESC')->get();
 
 
         foreach ($filter as $report) {
