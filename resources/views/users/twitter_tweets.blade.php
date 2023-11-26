@@ -6,7 +6,7 @@
               <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h4>Facebook Posts Of  ( {{auth()->user()->name}})</h4>
+                    <h4>Twitter Tweets Of  ( {{auth()->user()->name}})</h4>
                   </div>
                   <div class="card-body">
                     <ul class="nav nav-pills" id="myTab3" role="tablist">
