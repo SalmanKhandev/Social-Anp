@@ -85,7 +85,8 @@
                 data: 'post_id',
                 "render":function(data,type,row){
                      if (type === 'display') {
-                        return '<a>' + data+ '</a>';
+
+                        return `<a target='_blank' href='https://twitter.com/HaseebJanHamraz/status/${data}'>  ${data} </a>`;
                     }
                     return data; // For other types (sorting, type, etc.)
                 }

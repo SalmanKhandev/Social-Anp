@@ -115,12 +115,13 @@ class PostsController extends Controller
 
         foreach ($filter as $report) {
             $content = json_decode($report->content);
-            $message = isset($content->message) ? $content->message : 'Not Available';
+            $message = isset($content->message) ? $content->message : (isset($content->text) ? $content->text : 'Not Available');
 
             $tagsArray = [];
             foreach ($report->tags as $tag) {
                 $tagsArray[] = $tag->name;
             }
+
 
             $posts[] = [
                 'id' => $report->id,
