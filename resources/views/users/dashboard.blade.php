@@ -37,11 +37,14 @@
 </div>
 @endif
 <div class="row">
+ @if(!auth()->user()->facebook_connected)
+
 <div class="col-2">
     <a href="{{ url('/auth/facebook') }}" class="btn btn-block btn-social btn-facebook">
         <span class="fab fa-facebook"></span>Connect Facebook
     </a>
     </div>
+@endif
 @if(!auth()->user()->twitter_connected)
 <div class="col-2">
 <a href="{{route('twitter.user.login')}}" class="btn btn-block btn-social btn-twitter">
