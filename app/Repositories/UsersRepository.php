@@ -92,9 +92,11 @@ class UsersRepository
             'password' => bcrypt($data['password']),
             'contact_number' => $data['contact_number'],
             'designation' => $data['designation'],
-            'about' => $data['about'],
-            'address' => $data['address'],
-            'residence' => $data['residence'],
+            'candidate_name' => $data['candidate_name'],
+            'village_council' => $data['village_council'],
+            'residence' => $data['district'],
+            'constituency' => $data['constituency'],
+            'tehsil' => $data['tehsil'],
         ]);
         $user->assignRole('User');
         return $user;

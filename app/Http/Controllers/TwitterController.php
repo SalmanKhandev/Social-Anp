@@ -33,14 +33,7 @@ class TwitterController extends Controller
     public function handleTwitterCallback()
     {
         $user = Socialite::driver('twitter')->user();
-        $createUser = User::updateOrCreate(
-            ['email' => $user->email],
-            [
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar' => $user->avatar
-            ]
-        );
+        $createUser = auth()->user();
         $createUser->assignRole('User');
         $userAccounts = UserAccount::updateOrCreate(
             ['username' => $user->id],

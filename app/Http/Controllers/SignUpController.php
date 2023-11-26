@@ -22,6 +22,7 @@ class SignUpController extends Controller
 
     public function signupUser(Request $request)
     {
+        // dd($request->all());
         $validatedData = $request->validate([
             'full_name' => 'required',
             'email' => 'required|unique:users|email',
@@ -30,9 +31,12 @@ class SignUpController extends Controller
             'contact_number' => 'required',
             'designation' => 'required',
             'dob' => 'required',
-            'residence' => 'required',
-            'address' => 'required',
-            'about' => 'required'
+            'district' => 'required',
+            'village_council' => 'required',
+            'tehsil' => 'required',
+            'candidate_name' => 'required',
+            'constituency' => 'required'
+
         ]);
 
         $registerUser = $this->userRepository->registerUser($request);
