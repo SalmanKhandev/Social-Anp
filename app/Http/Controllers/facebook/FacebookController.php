@@ -90,7 +90,7 @@ class FacebookController extends Controller
 
         Auth::loginUsingId($createUser->id);
         $findUser = (new UsersRepository)->findUserById(auth()->user()->id);
-        $findUser->twitter_connected = true;
+        $findUser->facebook_connected = true;
         $findUser->save();
         session()->forget('user');
         return redirect()->route('users.dashboard')->with('message', 'Your Facebook is Connected!');
