@@ -9,8 +9,19 @@
         {{ session()->get('message') }}
     </div>
 @endif
+
+
+@if(auth()->user()->status==0)
+<div class="alert alert-primary">
+        You are registered successfully please wait until Admin approve your account !
+    </div>
+@endif
 </div>
 </div>
+
+
+
+
 @if(!auth()->user()->facebook_connected || !auth()->user()->twitter_connected)
 <div class="row">
 <div class="col-md-5">

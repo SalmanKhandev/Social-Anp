@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\UsersRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\UsersRepository;
 
 class SignUpController extends Controller
 {
@@ -40,8 +41,7 @@ class SignUpController extends Controller
         ]);
 
         $registerUser = $this->userRepository->registerUser($request);
-        if ($registerUser) {
-            return redirect()->route('users.dashboard')->with('message', 'You are registered successfully please wait until Admin approve your account !');
-        }
+        Auth::loginUsingId($registerUser->id);
+        return redirect()->route('users.dashboard')->with('message', 'You are registered successfully please wait until Admin approve your account !');
     }
 }

@@ -55,7 +55,7 @@ class PostsController extends Controller
         $posts = Post::with('tags', 'user', 'userAccount.platform')
             ->whereHas('userAccount.platform', function ($query) {
                 $query->where('name', 'Twitter');
-            });
+            })->orderBy('id', 'DESC');
         $groupedPosts  = $posts->get()->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });

@@ -49,7 +49,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::get('/', [UsersController::class, 'index'])->name("dashboard.users.all")->middleware('permission:view user');
         Route::get('/show_agreement', [UsersController::class, 'userAgreement'])->name('user.show_agreement');
         Route::get('/approve_agreement', [UsersController::class, 'approveAgreement'])->name('approve.agreement');
-        Route::get('/dashboard', [UsersController::class, 'dashboard'])->name('users.dashboard')->middleware('permission:view user dashboard')->middleware('approved');
+        Route::get('/dashboard', [UsersController::class, 'dashboard'])->name('users.dashboard')->middleware('permission:view user dashboard');
         Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile');
         Route::get('/user-profile/{id}', [UsersController::class, 'userProfile'])->name('users.user-profile');
         Route::post('/update_status', [UsersController::class, 'updateStatus'])->name('user.updateStatus');
