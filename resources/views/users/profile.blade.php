@@ -64,7 +64,7 @@
                 <p class="mb-0">Address</p>
             </div>
             <div class="col-sm-9">
-                <p class="text-muted mb-0">{{auth()->user()->address}}</p>
+                <p class="text-muted mb-0">{{auth()->user()->tehsil}}</p>
             </div>
             </div>
         </div>

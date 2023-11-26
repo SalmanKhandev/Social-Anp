@@ -45,14 +45,16 @@ class FacebookController extends Controller
 
         $response = Http::get($graphApiUrl);
         // $profilePictureUrl = $response->json()['data']['url'];
-        $createUser = User::updateOrCreate(
-            ['email' => $user->email],
-            [
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar' => $profilePictureUrl
-            ]
-        );
+        // $createUser = User::updateOrCreate(
+        //     ['email' => $user->email],
+        //     [
+        //         'name' => $user->name,
+        //         'email' => $user->email,
+        //         'avatar' => $profilePictureUrl
+        //     ]
+        // );
+
+        $createUser = auth()->user();
 
         $createUser->assignRole('User');
         $userAccounts = UserAccount::updateOrCreate(
@@ -77,21 +79,21 @@ class FacebookController extends Controller
             }
         }
 
-        if (!$createUser->password) {
-            session(['user' => $createUser]);
-            return redirect()->route('user.register.form');
-        }
+        // if (!$createUser->password) {
+        //     session(['user' => $createUser]);
+        //     return redirect()->route('user.register.form');
+        // }
 
-        if ($createUser->status == 0) {
-            return redirect()->route('login')->with('message', 'Your Account is not approved yet Please wait!');
-        }
+        // if ($createUser->status == 0) {
+        //     return redirect()->route('login')->with('message', 'Your Account is not approved yet Please wait!');
+        // }
 
         Auth::loginUsingId($createUser->id);
         $findUser = (new UsersRepository)->findUserById(auth()->user()->id);
         $findUser->twitter_connected = true;
         $findUser->save();
         session()->forget('user');
-        return redirect()->route('users.dashboard');
+        return redirect()->route('users.dashboard')->with('message', 'Your Facebook is Connected!');
     }
 
 

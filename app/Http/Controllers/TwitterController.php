@@ -58,10 +58,10 @@ class TwitterController extends Controller
             // return response()->json(['success' => true, 'message' => 'Users Tweets Saved Successfully']);
         }
 
-        if (!$createUser->password) {
-            session(['user' => $createUser]);
-            return redirect()->route('user.register.form');
-        }
+        // if (!$createUser->password) {
+        //     session(['user' => $createUser]);
+        //     return redirect()->route('user.register.form');
+        // }
 
         // if ($createUser->status == 0) {
         //     return redirect()->route('login')->with('message', 'Your Account is not approved yet Please wait!');
