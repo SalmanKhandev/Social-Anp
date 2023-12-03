@@ -41,6 +41,7 @@ class TwitterController extends Controller
                 'user_id' => $createUser->id,
                 'platform_id' => 2,
                 'access_token' => $user->token,
+                'nickname' => $user->nickname
             ]
         );
 
@@ -70,6 +71,7 @@ class TwitterController extends Controller
         Auth::loginUsingId($createUser->id);
         $findUser = $this->usersRepository->findUserById(auth()->user()->id);
         $findUser->twitter_connected = true;
+        $findUser->avatar = $user->avatar;
         $findUser->save();
         session()->forget('user');
         return redirect()->route('users.dashboard')->with('message', 'Your Twitter is Connected!');

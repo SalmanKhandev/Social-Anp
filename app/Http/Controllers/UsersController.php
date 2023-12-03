@@ -11,6 +11,8 @@ use App\Jobs\ThankYouEmailJob;
 use PhpParser\Node\Stmt\TryCatch;
 use App\Jobs\AccountActivationJob;
 use App\Jobs\AccountDeactivationJob;
+use App\Models\Platform;
+use App\Models\UserAccount;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\PostsRepository;
 use App\Repositories\UsersRepository;
@@ -105,7 +107,9 @@ class UsersController extends Controller
             return $post->tags->pluck('name')->toArray();
         });
 
-        return view('users.profile', compact("groupedPosts"));
+        $userTwitterProfile = UserAccount::where('user_id', auth()->user()->id)
+            ->where('platform_id', Platform::$TWITTER)->first();
+        return view('users.profile', compact("groupedPosts", "userTwitterProfile"));
     }
 
     public function userProfile($id)
@@ -117,8 +121,9 @@ class UsersController extends Controller
             return $post->tags->pluck('name')->toArray();
         });
         $user = User::with('userAccounts')->where('id', $id)->first();
-
-        return view('users.show-profile', compact("groupedPosts", "user"));
+        $userTwitterProfile = UserAccount::where('user_id', $id)
+            ->where('platform_id', Platform::$TWITTER)->first();
+        return view('users.show-profile', compact("groupedPosts", "user", "userTwitterProfile"));
     }
 
     public function userAgreement(Request $request)

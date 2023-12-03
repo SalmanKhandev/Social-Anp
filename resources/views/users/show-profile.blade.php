@@ -21,8 +21,8 @@
         <div class="card-body p-0">
             <ul class="list-group list-group-flush rounded-3">
             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                <p class="mb-0"><a target="_blank" href="https://twitter.com/intent/user?user_id{{$user->userAccounts[0]->username}}">{{$user->name}}</a></p>
+                <a target="_blank" href="https://twitter.com/{{$userTwitterProfile?->nickname}}" href=""><i class="fab fa-twitter fa-lg" style="color: #3b5998;"></i></a>
+                <p class="mb-0"><a target="_blank" >{{$user->name}}</a></p>
             </li>
             </ul>
         </div>

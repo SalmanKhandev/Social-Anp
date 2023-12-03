@@ -99,7 +99,7 @@ input:checked + .slider:before {
                     <td><a href="{{route('users.user-profile',$user->id)}}">{{$user->name}}</a> </td>
                     <td>{{$user->email}}</td>
                     <td>
-                     <img alt="image" style="margin-top: -15px;" src="{{$user->userAccounts[0]->platform_id==2 ? $user->avatar :'https://static.vecteezy.com/system/resources/previews/009/734/564/original/default-avatar-profile-icon-of-social-media-user-vector.jpg'}}" class="rounded-circle" width="70"
+                     <img alt="image" style="margin-top: -15px;" src="{{$user->avatar? $user->avatar :'https://static.vecteezy.com/system/resources/previews/009/734/564/original/default-avatar-profile-icon-of-social-media-user-vector.jpg'}}" class="rounded-circle" width="70"
                         data-toggle="tooltip" title="{{$user->name}}">
                     </td>
                     <td> 
