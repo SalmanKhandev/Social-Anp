@@ -373,6 +373,9 @@
             console.log(response);
             if(response.success){
                 showSwalMessage('success', 'Success', response.message)
+                 setTimeout(function(){
+                    location.reload(true)
+                }, 3000);
             }else{
                 showSwalMessage('error', "Error", "{{__('lang.Something went Wrong! please try again!')}}")
             }
@@ -413,6 +416,9 @@ $("#syncTwitter").click(function(){
         {
             if(response.success){
                 showSwalMessage('success', 'Success', response.message)
+                 setTimeout(function(){
+                    location.reload(true)
+                }, 3000);
             }else{
                 showSwalMessage('error', "Error", response.message)
             }

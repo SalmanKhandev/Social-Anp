@@ -15,66 +15,25 @@ use App\Console\Commands\PostsDeletion;
 use App\Repositories\TwitterRepository;
 use GuzzleHttp\Exception\RequestException;
 use PhpParser\Node\Stmt\TryCatch;
+use League\OAuth1\Client\Server\Twitter;
 
 class TestingController extends Controller
 {
     public function index()
     {
-        $posts = [];
-        $reports = Post::query();
-        $reports->with('tags', 'user', 'userAccount.platform');
-
-        $tag = 124;
-        $request = request();
-        if (!empty($request->user_id)) {
-            $reports->where('user_id', $request->user_id);
-        }
-
-        if (!empty($request->from_date)) {
-            $reports->whereDate('created_at', '>=', $request->from_date);
-        }
-
-        if (!empty($request->end_date)) {
-            $reports->whereDate('created_at', '<=', $request->end_date);
-        }
-
-        if (!empty($request->platform_id)) {
-            $reports->whereHas('userAccount', function ($query) use ($request) {
-                $query->where('platform_id', $request->platform_id);
-            });
-        }
-
-        if (!empty($request->category)) {
-            $reports->where('category', $request->category);
-        }
-
-        if (!empty($request->tag)) {
-            $reports->whereHas('tags', function ($query) use ($request) {
-                $query->where('id', $request->tag);
-            });
-        }
-
-
-        $filter = $reports->get();
-
-
-        foreach ($filter as $report) {
-            $content = json_decode($report->content);
-            $message = isset($content->message) ? $content->message : (isset($content->text) ? $content->text : 'Not Available');
-            $tagsArray = [];
-            foreach ($report->tags as $tag) {
-                $tagsArray[] = $tag->name;
-            }
-
-            $posts[] = [
-                'user' => $report->user->name,
-                'post_id' => $report->post_id,
-                'category' => $report->category ? $report->category : 'Not Specified',
-                'platform' => $report->userAccount->platform->name,
-                'message' => preg_replace('/#(\w+)/', '', $message),
-                'tags' => $tagsArray,
-                'created_at' => $report->updated_at->format('d/m/Y H:i:s a')
-            ];
-        }
+        $baseURL = "https://api.twitter.com/2/users/66178282/tweets";
+        $bearerToken = env('BEARER_TOKEN');
+        // $startTime = Carbon::today()->format('Y-m-d') . 'T00:00:00Z';
+        $startTime = Carbon::now()->subDays(10)->format('Y-m-d') . 'T00:00:00Z';
+        $endTime = Carbon::tomorrow()->format('Y-m-d') . 'T00:00:00Z';
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer {$bearerToken}",
+        ])->get($baseURL, [
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+        ]);
+        $data = $response->json();
+        dd($data);
+        return $data;
     }
 }
