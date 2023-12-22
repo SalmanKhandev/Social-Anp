@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="{{asset('public/assets/css/components.css')}}">
   <!-- Custom style CSS -->
   <link rel="stylesheet" href="{{asset('public/assets/css/custom.css')}}">
-  <link rel='shortcut icon' type='image/x-icon' href='assets/img/favicon.ico' />
+  <link rel='shortcut icon' type='image/x-icon' href='{{asset('public/assets/img/anp.png')}}' />
 </head>
 
 <body>
