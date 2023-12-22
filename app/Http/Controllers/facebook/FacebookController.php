@@ -28,7 +28,11 @@ class FacebookController extends Controller
     }
     public function redirectToFacebook()
     {
-        return Socialite::driver('facebook')->redirect();
+        try {
+            return Socialite::driver('facebook')->redirect();
+        } catch (\Throwable $th) {
+            return redirect()->route('users.dashboard')->with('message', $th->getMessage() . ' at line ' . $th->getLine());
+        }
     }
 
     public function handleFacebookCallback(Request $request)
