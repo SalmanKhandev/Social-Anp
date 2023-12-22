@@ -30,13 +30,12 @@ class TwitterController extends Controller
         try {
             return Socialite::driver('twitter')->redirect();
         } catch (\Throwable $th) {
-            return redirect()->route('users.dashboard')->with('message', 'Something went wrong try again later !');
+            return redirect()->route('users.dashboard')->with('message', $th->getMessage() . ' at line ' . $th->getLine());
         }
     }
 
     public function handleTwitterCallback()
     {
-
         try {
             $user = Socialite::driver('twitter')->user();
             $createUser = auth()->user();
@@ -71,7 +70,7 @@ class TwitterController extends Controller
             $findUser->avatar = $user->avatar;
             $findUser->save();
             session()->forget('user');
-            return redirect()->route('users.dashboard')->with('message', 'Your Twitter is Connected!');
+            return redirect()->route('users.dashboard')->with('message', 'Your Twitter Account  is connected Successfully!');
         } catch (\Throwable $th) {
             return redirect()->route('users.dashboard')->with('message', 'Something went wrong try again later !');
         }

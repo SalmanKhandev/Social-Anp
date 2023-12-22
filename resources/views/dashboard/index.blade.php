@@ -219,7 +219,6 @@ function preprocessData(data) {
         monthData[month].y = data[i].y;
         monthData[month].z = data[i].z;
 
-        console.log(monthData[month]);
 
     }
 
@@ -235,6 +234,7 @@ function preprocessData(data) {
 function getMorris(type, element) {
     if (type === "area") {
         var processedData = preprocessData(data);
+        console.log("processed",processedData);
         Morris.Area({
             element: element,
             data: processedData,
