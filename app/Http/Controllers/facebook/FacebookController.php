@@ -97,7 +97,7 @@ class FacebookController extends Controller
         $findUser->facebook_connected = true;
         $findUser->save();
         session()->forget('user');
-        return redirect()->route('users.dashboard')->with('message', 'Your Facebook is Connected!');
+        return redirect()->route('users.dashboard')->with('message', 'Your Facebook account is connected Successfully!');
     }
 
 
