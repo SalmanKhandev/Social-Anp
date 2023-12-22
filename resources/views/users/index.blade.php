@@ -131,7 +131,7 @@ input:checked + .slider:before {
                 </tr>
 
             @endforeach
-
+s
                 </table>
             </div>
             </div>

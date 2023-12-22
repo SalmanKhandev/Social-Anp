@@ -31,7 +31,7 @@
               </div>
               <div class="card-body">
                 <form method="POST" action="{{route('user.create.account')}}">
-                 @csrf
+                    {{ csrf_field() }}
                   <div class="row">
                       <div class="form-group col-6">
                       <label for="name" class="d-block">Name</label>
@@ -101,86 +101,42 @@
                       <label for="password2"  class="d-block">District</label>
                       <select class="form-control" required name="district">
                       <option value="">Select District</option>
-                      <option value="Abbottabad">Abbottabad</option>
-                      <option value="Ahmed Nager Chatha">Ahmed Nager Chatha</option>
-                      <option value="Bahawalnagar">Bahawalnagar</option>
-                      <option value="Bahawalpur">Bahawalpur</option>
-                      <option value="Bannu">Bannu</option>
-                      <option value="Bhakkar">Bhakkar</option>
-                      <option value="Chakwal">Chakwal</option>
-                      <option value="Chaman">Chaman</option>
-                      <option value="Charsadda">Charsadda</option>
-                      <option value="Chiniot">Chiniot</option>
-                      <option value="Chishtian">Chishtian</option>
-                      <option value="Daska">Daska</option>
-                      <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
-                      <option value="Dera Ismail Khan">Dera Ismail Khan</option>
-                      <option value="Faisalabad">Faisalabad</option>
-                      <option value="Fateh Jang">Fateh Jang</option>
-                      <option value="Ghotki">Ghotki</option>
-                      <option value="Gujar Khan">Gujar Khan</option>
-                      <option value="Gujranwala">Gujranwala</option>
-                      <option value="Gujrat">Gujrat</option>
-                      <option value="Hafizabad">Hafizabad</option>
-                      <option value="Haripur">Haripur</option>
-                      <option value="Hasan Abdal">Hasan Abdal</option>
-                      <option value="Hyderabad">Hyderabad</option>
-                      <option value="Jacobabad">Jacobabad</option>
-                      <option value="Jaranwala">Jaranwala</option>
-                      <option value="Jhang">Jhang</option>
-                      <option value="Jhelum">Jhelum</option>
-                      <option value="Kamalia">Kamalia</option>
-                      <option value="Kamoke">Kamoke</option>
-                      <option value="Karachi">Karachi</option>
-                      <option value="Karak">Karak</option>
-                      <option value="Kasur">Kasur</option>
-                      <option value="Khairpur">Khairpur</option>
-                      <option value="Khanewal">Khanewal</option>
-                      <option value="Khanpur">Khanpur</option>
-                      <option value="Khuzdar">Khuzdar</option>
-                      <option value="Kohat">Kohat</option>
-                      <option value="Kot Addu">Kot Addu</option>
-                      <option value="Kotri">Kotri</option>
-                      <option value="Lahore">Lahore</option>
-                      <option value="Larkana">Larkana</option>
-                      <option value="Layyah">Layyah</option>
-                      <option value="Lodhran">Lodhran</option>
-                      <option value="Mandi Bahauddin">Mandi Bahauddin</option>
-                      <option value="Mansehra">Mansehra</option>
-                      <option value="Mardan">Mardan</option>
-                      <option value="Mian Channu">Mian Channu</option>
-                      <option value="Mianwali">Mianwali</option>
-                      <option value="Multan">Multan</option>
-                      <option value="Murree">Murree</option>
-                      <option value="Muzaffargarh">Muzaffargarh</option>
-                      <option value="Nankana Sahib">Nankana Sahib</option>
-                      <option value="Narowal">Narowal</option>
-                      <option value="Nowshera">Nowshera</option>
-                      <option value="Okara">Okara</option>
-                      <option value="Pakpattan">Pakpattan</option>
-                      <option value="Peshawar">Peshawar</option>
-                      <option value="Quetta">Quetta</option>
-                      <option value="Rahim Yar Khan">Rahim Yar Khan</option>
-                      <option value="Rawalpindi">Rawalpindi</option>
-                      <option value="Sadiqabad">Sadiqabad</option>
-                      <option value="Sahiwal">Sahiwal</option>
-                      <option value="Sargodha">Sargodha</option>
-                      <option value="Sheikhupura">Sheikhupura</option>
-                      <option value="Shikarpur">Shikarpur</option>
-                      <option value="Sialkot">Sialkot</option>
-                      <option value="Sukkur">Sukkur</option>
-                      <option value="Swabi">Swabi</option>
-                      <option value="Swat">Swat</option>
-                      <option value="Tando Allahyar">Tando Allahyar</option>
-                      <option value="Tando Muhammad Khan">Tando Muhammad Khan</option>
-                      <option value="Taxila">Taxila</option>
-                      <option value="Toba Tek Singh">Toba Tek Singh</option>
-                      <option value="Vehari">Vehari</option>
-                      <option value="Wah Cantonment">Wah Cantonment</option>
-                      <option value="Wazirabad">Wazirabad</option>
-                      <option value="Zhob">Zhob</option>
+                      <option value="ABBOTTABAD">ABBOTTABAD</option>
+                      <option value="BAJAUR">BAJAUR</option>
+                      <option value="BATAGRAM">BATAGRAM</option>
+                      <option value="BUNER">BUNER</option>
+                      <option value="CHARSDADDA">CHARSDADDA</option>
+                      <option value="DERA ISMAIL KHAN">DERA ISMAIL KHAN</option>
+                      <option value="HANGU">HANGU</option>
+                      <option value="HARIPUR">HARIPUR</option>
+                      <option value="KARAK">KARAK</option>
+                      <option value="KHYBER">KHYBER</option>
+                      <option value="KOLAI PALAS">KOLAI PALAS</option>
+                      <option value="KOHAT">KOHAT</option>
+                      <option value="KURRAM">KURRAM</option>
+                      <option value="LAKKI MARWAT">LAKKI MARWAT</option>
+                      <option value="LOWER CHITRAL">LOWER CHITRAL</option>
+                      <option value="LOWER DIR">LOWER DIR</option>
+                      <option value="LOWER KOHISTAN">LOWER KOHISTAN</option>
+                      <option value="MALAKAND">MALAKAND</option>
+                      <option value="MARDAN">MARDAN</option>
+                      <option value="MANSEHRA">MANSEHRA</option>
+                      <option value="MOHMAND">MOHMAND</option>
+                      <option value="NORTH WAZIRISTAN">NORTH WAZIRISTAN</option>
+                      <option value="NOWSHERA">NOWSHERA</option>
+                      <option value="ORAKZAI">ORAKZAI</option>
+                      <option value="PESHAWAR">PESHAWAR</option>
+                      <option value="SHANGLA">SHANGLA</option>
+                      <option value="SOUTH WAZIRISTAN">SOUTH WAZIRISTAN</option>
+                      <option value="SWAT">SWAT</option>
+                      <option value="TANK">TANK</option>
+                      <option value="TORGHAR">TORGHAR</option>
+                      <option value="UPPER CHITRAL">UPPER CHITRAL</option>
+                      <option value="UPPER DIR">UPPER DIR</option>
+                      <option value="UPPER KOHISTAN">UPPER KOHISTAN</option>
+                      <option value="UPPER SWAT">UPPER SWAT</option>
                   </select>
-                       @error('residence')
+                       @error('district')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

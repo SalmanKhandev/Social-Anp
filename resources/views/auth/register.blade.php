@@ -31,7 +31,7 @@
               </div>
               <div class="card-body">
                 <form method="POST" action="{{route('user.register')}}">
-                    @csrf
+                    {{ csrf_field() }}
                   <div class="row">
                     <input type="hidden" name="user_id" value="{{$user->id}}">
                     <div class="form-group col-6">
