@@ -23,7 +23,7 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check()) {
                 if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Super-Admin')) {
                     // If the user has 'admin' or 'super-admin' role, redirect to 'admin.dashboard'.
-                    return redirect()->route('admins.dashboard');
+                    return redirect()->route('admin.dashboard');
                 }
 
                 // if (auth()->user()->hasRole('User')) {
