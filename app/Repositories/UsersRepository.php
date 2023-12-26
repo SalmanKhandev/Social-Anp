@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Models\Platform;
 use App\Jobs\ThankYouEmailJob;
 use App\Jobs\AccountActivationJob;
 use App\Jobs\AccountDeactivationJob;
@@ -28,15 +29,19 @@ class UsersRepository
 
     public function facebooKTopUsers($limit = 10)
     {
-        $topUsers = User::withCount('posts')
-            ->whereHas('userAccounts', function ($query) {
-                $query->where('platform_id', 1);
-            })
-            ->having('posts_count', '>', 0)
-            ->orderByDesc('posts_count')
+
+        $topUsers = User::withWhereHas('userAccounts', function ($query) {
+            $query->where('platform_id', Platform::$FACEBOOK);
+        })
+            ->withCount(['userAccounts as user_facebook_accounts' => function ($query) {
+                $query->where('platform_id', Platform::$FACEBOOK);
+            }])
+            ->withCount(['userAccounts as user_facebook_posts' => function ($query) {
+                $query->where('platform_id', Platform::$FACEBOOK)->has('posts');
+            }])
+            ->having('user_facebook_posts', '>', 0)
             ->limit($limit)
             ->get();
-
         return $topUsers;
     }
 

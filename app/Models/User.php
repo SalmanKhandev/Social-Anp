@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class, 'user_id', 'id');
     }
+
+    public function facebookPosts()
+    {
+        return $this->hasManyThrough(Post::class, UserAccount::class)->where('platform_id', Platform::$FACEBOOK);
+    }
 }

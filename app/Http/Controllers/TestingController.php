@@ -7,33 +7,47 @@ use App\Models\Tag;
 use App\Models\Post;
 use App\Models\User;
 use GuzzleHttp\Client;
+use App\Models\Platform;
 use App\Models\PostSetting;
+use App\Models\UserAccount;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\TryCatch;
 use App\Repositories\SyncRepository;
 use Illuminate\Support\Facades\Http;
 use App\Console\Commands\PostsDeletion;
 use App\Repositories\TwitterRepository;
-use GuzzleHttp\Exception\RequestException;
-use PhpParser\Node\Stmt\TryCatch;
 use League\OAuth1\Client\Server\Twitter;
+use GuzzleHttp\Exception\RequestException;
 
 class TestingController extends Controller
 {
     public function index()
     {
-        $baseURL = "https://api.twitter.com/2/users/66178282/tweets";
-        $bearerToken = env('BEARER_TOKEN');
-        // $startTime = Carbon::today()->format('Y-m-d') . 'T00:00:00Z';
-        $startTime = Carbon::now()->subDays(10)->format('Y-m-d') . 'T00:00:00Z';
-        $endTime = Carbon::tomorrow()->format('Y-m-d') . 'T00:00:00Z';
-        $response = Http::withHeaders([
-            'Authorization' => "Bearer {$bearerToken}",
-        ])->get($baseURL, [
-            'start_time' => $startTime,
-            'end_time' => $endTime,
-        ]);
-        $data = $response->json();
-        dd($data);
-        return $data;
+
+        $users = User::withWhereHas('userAccounts', function ($query) {
+            $query->where('platform_id', Platform::$FACEBOOK);
+        })
+            ->withCount(['userAccounts as user_facebook_accounts' => function ($query) {
+                $query->where('platform_id', Platform::$FACEBOOK);
+            }])
+            ->withCount(['userAccounts as user_facebook_posts' => function ($query) {
+                $query->where('platform_id', Platform::$FACEBOOK)->has('posts');
+            }])
+            ->having('user_facebook_posts', '>', 0)
+            ->get();
+
+        dd($users);
+
+
+        $topUsers = User::withCount('posts')
+            ->whereHas('userAccounts', function ($query) {
+                $query->where('platform_id', 1);
+            })
+            ->having('posts_count', '>', 0)
+            ->orderByDesc('posts_count')
+            ->limit(10)
+            ->get();
+
+        return $topUsers;
     }
 }

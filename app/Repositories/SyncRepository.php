@@ -35,9 +35,9 @@ class SyncRepository
 
     public function syncTwitter()
     {
-        $allUsers = UserAccount::where('platform_id', Platform::$TWITTER)->get();
+        $allUsers = UserAccount::with('user')->where('platform_id', Platform::$TWITTER)->get();
         foreach ($allUsers as $user) {
-            $userPosts = (new TwitterRepository)->getTweetsToday($user->username);
+            $userPosts = (new TwitterRepository)->getTweetsToday($user->username, $user->user->created_at);
             if (isset($userPosts['data'])) {
                 foreach ($userPosts['data'] as $userPost) {
                     $post = Post::updateOrCreate([

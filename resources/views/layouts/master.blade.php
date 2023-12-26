@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
 <!-- index.html  21 Nov 2019 03:44:50 GMT -->
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
   <title>@yield('Title','Dashboard')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="refresh" content="{{ config('session.lifetime') * 60 }}">
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="{{asset('public/assets/css/app.min.css')}}">
   <link rel="stylesheet" href="{{asset('public/assets/bundles/morris/morris.css')}}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Template CSS -->
   <link rel="stylesheet" href="{{asset('public/assets/bundles/bootstrap-social/bootstrap-social.css')}}">
   <link rel="stylesheet" href="{{asset('public/assets/css/style.css')}}">
@@ -377,7 +374,7 @@
                     location.reload(true)
                 }, 3000);
             }else{
-                showSwalMessage('error', "Error", "{{__('lang.Something went Wrong! please try again!')}}")
+                showSwalMessage('error', "Error", "Something went Wrong! please try again!s")
             }
         },
         complete: function () {

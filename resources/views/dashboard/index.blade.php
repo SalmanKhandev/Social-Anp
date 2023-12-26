@@ -82,7 +82,6 @@
     <div class="card">
     <div class="card-header">
         <h4>Facebook Top Users</h4>
-       
     </div>
     <div class="card-body">
       
@@ -90,7 +89,7 @@
         <div class="support-ticket media pb-1 mb-3">
         <img src="https://i.pinimg.com/1200x/7b/8c/d8/7b8cd8b068e4b9f80b4bcf0928d7d499.jpg" class="user-img mr-2" alt="">
         <div class="media-body ml-3">
-            <div class="badge badge-pill badge-info mb-1 float-right">{{$user->posts_count}}</div>
+            <div class="badge badge-pill badge-info mb-1 float-right">{{$user->user_facebook_posts}}</div>
             <span class="font-weight-bold">{{$user->name}}</span><br>
             <small class="text-muted">Member Since
             &nbsp;&nbsp; {{\Carbon\Carbon::parse($user->created_at)->format('F Y')}}</small>
