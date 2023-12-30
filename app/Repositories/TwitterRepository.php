@@ -39,9 +39,8 @@ class TwitterRepository
                 'max_results' => 100,
                 'start_time' => $startTime,
                 'end_time' => $endTime,
+                'sort_by' => 'updated_at-desc',
             ];
-            $userId = '1067464793630613504';
-
             $allTweets = $this->fetchUserTweets($userId, $queryParams);
             return ['data' => $allTweets];
         } catch (\Throwable $th) {
