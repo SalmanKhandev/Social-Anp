@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\Platform;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Http;
+use PhpParser\Node\Stmt\TryCatch;
 
 class SyncRepository
 {
@@ -16,7 +17,7 @@ class SyncRepository
         $allUsers = UserAccount::where('platform_id', Platform::$FACEBOOK)->get();
         foreach ($allUsers as $user) {
             $userPosts = $this->getUserFacebooksPosts($user->username, $user->access_token);
-            foreach ($userPosts as $userPost) {
+            foreach ($userPosts['data'] as $userPost) {
                 $post = Post::updateOrCreate([
                     'post_id' => $userPost['id'],
                     'user_id' => $user->user_id,
@@ -35,40 +36,50 @@ class SyncRepository
 
     public function syncTwitter()
     {
-        $allUsers = UserAccount::with('user')->where('platform_id', Platform::$TWITTER)->get();
-        foreach ($allUsers as $user) {
-            $userPosts = (new TwitterRepository)->getTweetsToday($user->username, $user->user->created_at);
-            if (isset($userPosts['data'])) {
-                foreach ($userPosts['data'] as $userPost) {
-                    $post = Post::updateOrCreate([
-                        'post_id' => $userPost['id'],
-                        'user_id' => $user->user_id,
-                        'user_account_id' => $user->id,
-                    ], [
-                        'content' => json_encode($userPost)
-                    ]);
-                    if (array_key_exists('text', $userPost)) {
-                        (new HashTagsRepository)->createHashTags($userPost['text'], $post->id);
+        try {
+            $allUsers = UserAccount::with('user')->where('platform_id', Platform::$TWITTER)->get();
+            foreach ($allUsers as $user) {
+                // $userPosts = (new TwitterRepository)->getTweetsToday($user->username, $user->user->created_at);
+                $userPosts = (new TwitterRepository)->retrieveUserTweets($user->username, $user->user->created_at);
+
+                if (isset($userPosts['data'])) {
+                    foreach ($userPosts['data'] as $userPost) {
+                        $post = Post::updateOrCreate([
+                            'post_id' => $userPost['id'],
+                            'user_id' => $user->user_id,
+                            'user_account_id' => $user->id,
+                        ], [
+                            'content' => json_encode($userPost)
+                        ]);
+                        if (array_key_exists('text', $userPost)) {
+                            (new HashTagsRepository)->createHashTags($userPost['text'], $post->id);
+                        }
                     }
                 }
             }
+            Setting::create(['sync_date' => Carbon::now()]);
+            return (object) ['status' => true, 'message' => 'Tweets retrieved Succesffully'];
+        } catch (\Throwable $th) {
+            return (object) ['status' => false, 'message' => $th->getMessage()];
         }
-        Setting::create(['sync_date' => Carbon::now()]);
     }
 
 
 
     public function getUserFacebooksPosts($userId, $accessToken)
     {
-        $posts = $this->fetchUserPosts($userId, $accessToken);
-        return $posts;
+        try {
+            $posts = $this->fetchUserPosts($userId, $accessToken);
+            return $posts;
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
     }
 
     public function fetchUserPosts($userId, $accessToken, $url = null, $posts = [])
     {
         $url = $url ? $url : $this->buildGraphUrlUrl($userId, $accessToken);
         $response = Http::get($url);
-
         if (isset($response['data']) && !empty($response['data'])) {
             $posts = [...$posts, ...$response['data']];
         }

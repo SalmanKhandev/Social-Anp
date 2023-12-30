@@ -50,7 +50,7 @@ class TwitterController extends Controller
                 ]
             );
 
-            $userTweets = $this->twitterRepository->getTweetsToday($user->id);
+            $userTweets = $this->twitterRepository->getTweetsToday($user->id, $createUser->created_at);
             if (isset($userTweets['data'])) {
                 foreach ($userTweets['data'] as $userPost) {
                     $post = Post::updateOrCreate([

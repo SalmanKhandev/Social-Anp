@@ -21,33 +21,70 @@ use GuzzleHttp\Exception\RequestException;
 
 class TestingController extends Controller
 {
+    // public function index()
+    // {
+    //     $userId = '1067464793630613504';
+    //     $queryParams = [
+    //         'max_results' => 100
+    //     ];
+
+    //     $tweets = $this->retriveTweets($userId, $queryParams);
+    //     dd($tweets);
+    // }
+
+    // public function retriveTweets($userId, $queryParams, $tweets = [])
+    // {
+    //     $response = $this->twitterUrl($userId, $queryParams);
+    //     $data = $response->json();
+    //     if (isset($data['data'])) {
+    //         $tweets = array_merge($tweets, $data['data']);
+    //     }
+
+    //     if (isset($data['meta']['next_token'])) {
+    //         $queryParams['pagination_token'] = $data['meta']['next_token'];
+    //         return  $this->retriveTweets('1067464793630613504', $queryParams, $tweets);
+    //     }
+
+    //     return $tweets;
+    // }
+
+    // public function twitterUrl($userId, $queryParams)
+    // {
+
+    //     return Http::withToken(env('BEARER_TOKEN'))
+    //         ->get("https://api.twitter.com/2/users/{$userId}/tweets", $queryParams);
+    // }
+
+
+
     public function index()
     {
+        $data = (new TwitterRepository)->retrieveUserTweets('1067464793630613504', '2023-12-29 01:06:12');
+        return $data;
+    }
 
-        $users = User::withWhereHas('userAccounts', function ($query) {
-            $query->where('platform_id', Platform::$FACEBOOK);
-        })
-            ->withCount(['userAccounts as user_facebook_accounts' => function ($query) {
-                $query->where('platform_id', Platform::$FACEBOOK);
-            }])
-            ->withCount(['userAccounts as user_facebook_posts' => function ($query) {
-                $query->where('platform_id', Platform::$FACEBOOK)->has('posts');
-            }])
-            ->having('user_facebook_posts', '>', 0)
-            ->get();
+    private function fetchUserTweets($userId, $queryParams, &$tweets = [])
+    {
+        $response = $this->getUserTweets($userId, $queryParams);
+        $data = $response->json();
 
-        dd($users);
+        if (isset($data['data'])) {
+            $tweets = array_merge($tweets, $data['data']);
+        }
 
+        // Check if there are more tweets
+        if (isset($data['meta']['next_token'])) {
+            $nextToken = $data['meta']['next_token'];
+            $queryParams['pagination_token'] = $nextToken;
+            $tweets = $this->fetchUserTweets($userId, $queryParams, $tweets);
+        }
 
-        $topUsers = User::withCount('posts')
-            ->whereHas('userAccounts', function ($query) {
-                $query->where('platform_id', 1);
-            })
-            ->having('posts_count', '>', 0)
-            ->orderByDesc('posts_count')
-            ->limit(10)
-            ->get();
+        return $tweets;
+    }
 
-        return $topUsers;
+    private function getUserTweets($userId, $queryParams)
+    {
+        return Http::withToken(env('BEARER_TOKEN'))
+            ->get("https://api.twitter.com/2/users/{$userId}/tweets", $queryParams);
     }
 }

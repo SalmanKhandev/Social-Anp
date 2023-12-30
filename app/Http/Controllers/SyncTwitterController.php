@@ -16,8 +16,8 @@ class SyncTwitterController extends Controller
     public function syncTwitterTweets()
     {
         try {
-            $this->syncTwitterRepository->syncTwitter();
-            return response()->json(['success' => true, 'message' => 'Twitter Tweets Sync  successfully']);
+            $response = $this->syncTwitterRepository->syncTwitter();
+            return response()->json(['success' => true, 'message' => $response->message]);
         } catch (\Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage() . " at " . $th->getLine()]);
         }
