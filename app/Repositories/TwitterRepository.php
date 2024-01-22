@@ -238,8 +238,7 @@ class TwitterRepository
 
             foreach ($users as $user) {
                 // Replace these values with your actual Twitter API credentials
-                $consumerKey = '2C4SyyqxbJ8vOu9sUHOJq2ft9';
-                $consumerSecret = '6o583gCy8IwO72mZP8r41Zd9uKvCR3UiVF093SSvIlYMZP2ffV';
+
                 $accessToken = $user->access_token;
                 $accessTokenSecret = $user->token_secret;
 
