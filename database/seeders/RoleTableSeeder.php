@@ -18,7 +18,8 @@ class RoleTableSeeder extends Seeder
         Role::truncate();
         $roles['user'] = Role::create(['name' => 'User']);
         $roles['super-admin'] = Role::create(['name' => 'SuperAdmin']);
-        $roles['admin'] = Role::create(['name' => 'admin']);
+        $roles['admin'] = Role::create(['name' => 'Admin']);
+        $roles['Leader'] = Role::create(['name' => 'Leader']);
         Schema::enableForeignKeyConstraints();
     }
 }

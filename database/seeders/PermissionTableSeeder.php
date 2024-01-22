@@ -18,7 +18,7 @@ class PermissionTableSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
         Permission::truncate();
 
-        $roles = Role::whereIn('name', ['Admin', 'SuperAdmin', 'User'])->get()->keyBy('name');
+        $roles = Role::whereIn('name', ['Admin', 'SuperAdmin', 'User', 'Leader'])->get()->keyBy('name');
 
         ////////// dashboard ///////////
         $adminDashboard[] = Permission::firstOrCreate(['name' => 'view admin dashboard'], ['guard_name' => 'web']);
@@ -34,11 +34,16 @@ class PermissionTableSeeder extends Seeder
         ///////////// Reports ////////////////
         $reports[] = Permission::firstOrCreate(['name' => 'view Reports'], ['guard_name' => 'web']);
 
+        ///////////// Trends ////////////////
+        $trends[] = Permission::firstOrCreate(['name' => 'view trends'], ['guard_name' => 'web']);
+
         ////////////// admin ////////////////
         $admin[] = Permission::firstOrCreate(['name' => 'create admin'], ['guard_name' => 'web']);
         $admin[] = Permission::firstOrCreate(['name' => 'view admin'], ['guard_name' => 'web']);
         $admin[] = Permission::firstOrCreate(['name' => 'delete admin'], ['guard_name' => 'web']);
         $admin[] = Permission::firstOrCreate(['name' => 'update admin'], ['guard_name' => 'web']);
+
+        $leader[] = Permission::firstOrCreate(['name' => 'list leaders'], ['guard_name' => 'web']);
 
 
         ////////////// user dashboard ////////////////
@@ -52,9 +57,12 @@ class PermissionTableSeeder extends Seeder
         $roles['User']->syncPermissions(array_merge($userDashboard));
         /**All To User */
 
-        $roles['SuperAdmin']->syncPermissions(array_merge($adminDashboard, $user, $reports, $admin, $sync, $facebook));
+        /** All Leaders */
+
+
+        $roles['SuperAdmin']->syncPermissions(array_merge($adminDashboard, $user, $reports, $admin, $sync, $facebook, $trends, $leader));
         /**All To superadmin */
-        $roles['Admin']->syncPermissions(array_merge($adminDashboard, $user, $reports, $sync, $facebook));
+        $roles['Admin']->syncPermissions(array_merge($adminDashboard, $user, $reports, $sync, $facebook, $trends, $leader));
         /**All To superadmin */
 
         Schema::enableForeignKeyConstraints();

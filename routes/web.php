@@ -59,6 +59,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/delete_user', [UsersController::class, 'deleteUser'])->name('user.deleteUser');
         Route::post('/update_user', [UsersController::class, 'updateUser'])->name('user.updateUser');
         Route::post('/assign-admin-role', [UsersController::class, 'assignAdminRole'])->name('user.assignAdminRole');
+        Route::post('/assign-leader-role', [UsersController::class, 'assignLeaderRole'])->name('user.assignLeaderRole');
     });
 
 
@@ -68,6 +69,12 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/update_admin', [AdminController::class, 'updateAdmin'])->name('admin.updateAdmin');
         Route::post('/delete_admin', [AdminController::class, 'deleteAdmin'])->name('admin.deleteAdmin');
     });
+
+    Route::prefix('leaders')->group(function () {
+        Route::get('/', [UsersController::class, 'listLeaders'])->name("dashboard.leaders.all");
+        Route::post('/delete_leader', [UsersController::class, 'deleteLeader'])->name('leaders.deleteLeader');
+    });
+
     // Posts Routes 
     Route::prefix('posts')->group(function () { // Use Route::group for nesting
         Route::get("/{user_id}/{platform_id}", [PostsController::class, "index"])->name("dashboard.posts.all");
@@ -78,6 +85,8 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::prefix('sync')->group(function () { // Use Route::group for nesting
         Route::post("/facebook_sync", [SyncFacebookController::class, "syncFacebookPosts"])->name("sync.facebook.posts");
         Route::post('/twitter_sync', [SyncTwitterController::class, "syncTwitterTweets"])->name("sync.twitter.tweets");
+        Route::post('/retweet_sync', [TwitterController::class, "syncRetweets"])->name("sync.twitter.retweets");
+        Route::post('/retweets', [TwitterController::class, "retweets"])->name("twitter.retweets");
     });
 
 
@@ -89,8 +98,12 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
     Route::get("/all", [PostsController::class, "facebookPosts"])->name("facebook.posts");
     Route::get("/all_twitter_tweets", [PostsController::class, "twitterTweets"])->name("twitter.tweets");
+    Route::get('/tweets', [TwitterController::class, 'tweets'])->name('tweets');
+    Route::get('/get_all_tweets', [TwitterController::class, 'getAllTwitterTweets'])->name('twitter.all.tweets');
     Route::get("/user_posts", [PostsController::class, "userFacebookposts"])->name("user.facebook.posts");
     Route::get("/user_tweets", [TwitterController::class, "userTwitterTweets"])->name("name.twitter.tweets");
+    Route::get("/twitter_trends", [TwitterController::class, "twitterTrends"])->name("twitter.trends");
+    Route::get('/trending_tags', [TwitterController::class, 'getTrendingTags'])->name('trending.getTrendingTags');
     Route::get("/twitter", [PostsController::class, "twitterPosts"])->name("twitter.posts");
     Route::get("/instagram", [PostsController::class, "instagramPosts"])->name("instagram.posts");
     Route::get("/sync", [PostsController::class, "syncPosts"])->name("dashboard.posts.sync");
@@ -109,3 +122,4 @@ Route::get('/get-user-tweets', [TwitterController::class, 'getUserTweets'])->nam
 Route::get('/facebook/page/{pageId}', [FacebookPageController::class, 'getPageData']);
 Route::get('/signup', [SignUpController::class, 'signUp'])->name('user.signup');
 Route::post('/signup_user', [SignUpController::class, 'signupUser'])->name('user.create.account');
+Route::post('/run_tweets_jobs', [SyncTwitterController::class, "runTwitterJobs"])->name("sync.twitter.jobs");

@@ -36,6 +36,7 @@
                                 <th scope="col">Tweet Id</th>
                                 <th scope="col">Post Content</th>
                                 <th scope="col">Category</th>
+                                <th scope="col">Retweets</th>
                                 <th scope="col">Hashtags</th>
                                 <th scope="col">Last Update</th>
                                 </tr>
@@ -64,6 +65,9 @@
                                 </td>
                                   <td>
                                   {{isset($post->category) ? $post->category : 'Not Specified'}}
+                                </td>
+                                <td>
+                                  {{$post->retweets_count}}
                                 </td>
                                   <td style="color: blue;">
                                     @foreach($post->tags as $tag)
@@ -99,6 +103,7 @@
                                 <th scope="col">Tweet Id</th>
                                 <th scope="col">Post Content</th>
                                 <th scope="col">Category</th>
+                                <th scope="col">Retweet</th>
                                 <th scope="col">Hashtags</th>
                                 <th scope="col">Last Update</th>
                                 </tr>
@@ -123,6 +128,9 @@
                                 </td>
                                   <td>
                                   {{isset($post->category) ? $post->category : 'Not Specified'}}
+                                </td>
+                                <td>
+                                  {{$post->retweets_count}}
                                 </td>
                                   <td style="color: blue;">
                                     @foreach($post->tags as $tag)

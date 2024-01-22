@@ -47,7 +47,12 @@
              <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncFacebook" type="button">
               
             <i class="fas fa-sync"></i>Facebook</a>
-             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncTwitter" type="button">
+            <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncTwitterRetweet" type="button">
+                <i class="fas fa-sync"></i>Retweet  </a>
+             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncTwitterLeaders" type="button">
+              
+            <i class="fas fa-sync"></i>Sync Leaders Tweets </a>
+             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="synctwitter" type="button">
               
             <i class="fas fa-sync"></i>Twitter </a>
              <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="" type="button">
@@ -117,6 +122,13 @@
             </li>
             @endcan
 
+            @can('list leaders')
+             <li class="dropdown {{request()->routeIs('dashboard.leaders.all') ? 'active' : ''}}">
+              <a href="{{route('dashboard.leaders.all')}}" class=" nav-link"><i
+                  data-feather="users"></i><span>Leaders</span></a>
+            </li>
+            @endcan
+
             @can('view facebook posts')
              <li class="dropdown {{request()->routeIs('facebook.posts') ? 'active' : ''}}">
               <a href="{{route('facebook.posts')}}" class=" nav-link"><i
@@ -129,6 +141,13 @@
               <li class="dropdown {{request()->routeIs('instagram.posts') ? 'active' : ''}}">
               <a href="#" class=" nav-link"><i
                   data-feather="instagram"></i><span>Instagram Posts</span></a>
+            </li>
+            @endcan
+             
+            @can('view trends')
+             <li class="dropdown {{request()->routeIs('twitter.trends') ? 'active' : ''}}">
+              <a href="{{route('twitter.trends')}}" class=" nav-link">
+                <i data-feather="trending-up"></i><span>Twitter Trends</span></a>
             </li>
             @endcan
 
@@ -394,6 +413,88 @@ $("#syncTwitter").click(function(){
     Swal.fire({
     title: 'Are You Sure ?',
     text: "You want to Sync Twitter Tweets",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+    cancelButtonText:'Cancel',
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+        type: 'POST',
+        url: url,
+        data: {},
+        beforeSend: function () {
+            showLoader()
+        },
+        success: function(response)
+        {
+            if(response.success){
+                showSwalMessage('success', 'Success', response.message)
+            }else{
+                showSwalMessage('error', "Error", response.message)
+            }
+        },
+        complete: function () {
+            hideLoader()
+             setTimeout(function(){
+               location.reload(true)
+              }, 3000);
+        },
+    });
+    }
+    }); 
+  });
+
+
+  // Sync Twitter Retweets 
+$("#syncTwitterRetweet").click(function(){
+    var url='{{ route("twitter.retweets") }}';
+    Swal.fire({
+    title: 'Are You Sure ?',
+    text: "You want to Sync Twitter Retweets",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+    cancelButtonText:'Cancel',
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+        type: 'POST',
+        url: url,
+        data: {},
+        beforeSend: function () {
+            showLoader()
+        },
+        success: function(response)
+        {
+            if(response.success){
+                showSwalMessage('success', 'Success', response.message)
+            }else{
+                showSwalMessage('error', "Error", response.message)
+            }
+        },
+        complete: function () {
+            hideLoader()
+             setTimeout(function(){
+               location.reload(true)
+              }, 3000);
+        },
+    });
+    }
+    }); 
+  });
+
+
+  // Sync Retweets 
+$("#syncTwitterLeaders").click(function(){
+    var url='{{ route("sync.twitter.retweets") }}';
+    Swal.fire({
+    title: 'Are You Sure ?',
+    text: "You want to get Twitter Tweets Leaders",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',

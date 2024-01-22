@@ -55,4 +55,10 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Post::class, UserAccount::class)->where('platform_id', Platform::$FACEBOOK);
     }
+
+    public function retweets()
+    {
+
+        return $this->hasMany(TagRetweet::class, 'user_id', 'id');
+    }
 }

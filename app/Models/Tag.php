@@ -14,4 +14,9 @@ class Tag extends Model
     {
         return $this->belongsToMany(Post::class, 'post_has_tags');
     }
+
+    public function tagTweets()
+    {
+        return $this->hasMany(TagRetweet::class, 'tag_id', 'id');
+    }
 }

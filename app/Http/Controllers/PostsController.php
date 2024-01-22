@@ -55,12 +55,12 @@ class PostsController extends Controller
         $posts = Post::with('tags', 'user', 'userAccount.platform')
             ->whereHas('userAccount.platform', function ($query) {
                 $query->where('name', 'Twitter');
-            })->orderBy('id', 'DESC');
+            })->withCount('retweets')->orderBy('id', 'DESC');
         $groupedPosts  = $posts->get()->groupBy(function ($post) {
             return $post->tags->pluck('name')->toArray();
         });
 
-        $allTweets = $posts->paginate(20);
+        $allTweets = $posts->paginate(50);
         return view('posts.twitter', ['allTweets' => $allTweets, 'groupedPosts' => $groupedPosts]);
     }
 

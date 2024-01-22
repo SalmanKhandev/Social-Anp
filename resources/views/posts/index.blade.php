@@ -42,15 +42,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                             @foreach($tags as $post)
+
+                             @foreach($tags as $index=> $post)
                                    @php
                                 $content = json_decode($post->content);
+                                $index++;
                                 @endphp
                                 <tr>
-                                <th scope="row">1</th>
+                                <th scope="row">{{$index}}</th>
                                 <td>{{$post->user->name}}</td>
                                   <td>
-                     <img alt="image" src="https://static.vecteezy.com/system/resources/previews/009/734/564/original/default-avatar-profile-icon-of-social-media-user-vector.jpg" class="rounded-circle" width="70"
+                     <img alt="image" src="{{$post->user->avatar}}" class="rounded-circle" width="70"
                         data-toggle="tooltip" title="{{$post->user->name}}">
                     </td>
                                 <td><a href="https://www.facebook.com/{{$post->userAccount->username}}/posts/{{$post->post_id}}" target="_blank">{{$post->post_id}}</a></td>

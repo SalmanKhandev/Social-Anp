@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Platform;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\PostsRepository;
+use App\Repositories\UsersRepository;
 use Abraham\TwitterOAuth\TwitterOAuth;
 use App\Repositories\TwitterRepository;
-use App\Repositories\UsersRepository;
+use App\Repositories\HashTagsRepository;
 use Laravel\Socialite\Facades\Socialite;
+use Yajra\DataTables\Facades\DataTables;
+use SebastianBergmann\LinesOfCode\Counter;
 
 class TwitterController extends Controller
 {
@@ -46,6 +51,7 @@ class TwitterController extends Controller
                     'user_id' => $createUser->id,
                     'platform_id' => 2,
                     'access_token' => $user->token,
+                    'token_secret' => $user->tokenSecret,
                     'nickname' => $user->nickname
                 ]
             );
@@ -97,5 +103,55 @@ class TwitterController extends Controller
     {
         $twitterTweets = $this->postsRepository->getPostAndTweets('Twitter');
         return view('users.twitter_tweets', ['groupedPosts' => $twitterTweets]);
+    }
+
+    public function twitterTrends(Request $request)
+    {
+        return view("users.trendings", [
+            'query' => $request->has('query') ? $request->get('query') : null,
+            'tags' => (new HashTagsRepository)->all(),
+
+        ]);
+    }
+
+    public function getTrendingTags(Request $request)
+    {
+        $trendingTweets = (new TwitterRepository)->filterTwitterTrends($request);
+        return DataTables::of($trendingTweets)->addColumn('serial_number', function ($tweet) {
+            static $counter = 0;
+            $counter++;
+            return $counter;
+        })->make(true);
+    }
+
+    public function tweets()
+    {
+        return view('twitter.tweets');
+    }
+
+    public function getAllTwitterTweets(Request $request)
+    {
+        $tweets = Post::where('platform_id', Platform::$TWITTER)->get();
+    }
+
+    public function syncRetweets()
+    {
+        try {
+            $listOfIds = $this->usersRepository->getLeadersIds();
+            $response = $this->twitterRepository->syncTwitterRetweet($listOfIds);
+            return response()->json(['success' => true, 'message' => $response->message]);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage() . " at " . $th->getLine()]);
+        }
+    }
+
+    public function retweets()
+    {
+        try {
+            $response = $this->twitterRepository->retweets();
+            return response()->json(['success' => true, 'message' => 'Retweets Done Successfully']);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage() . " at " . $th->getLine()]);
+        }
     }
 }

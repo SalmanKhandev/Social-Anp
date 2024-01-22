@@ -30,6 +30,11 @@
                         {!! Form::label('from_date', 'From Date') !!}
                         {!! Form::date('query[from_date]', (!is_null($query)) ? $query['from_date'] : null, ['id' => 'from_date', 'class' => 'form-control refresh']) !!}
                     </div>
+                    
+                    <div class="form-group col-md-2">
+                        {!! Form::label('to_date', 'To Date') !!}
+                        {!! Form::date('query[to_date]', (!is_null($query)) ? $query['to_date'] : null, ['id' => 'to_date', 'class' => 'form-control refresh']) !!}
+                    </div>
                     <div class="form-group col-md-2">
                       {!! Form::label('category', 'Category') !!}
                       {!! Form::select('category', ['' => 'Select Category', 'Personal' => 'Personal', 'Political' => 'Political'], null, ['id' => 'category', 'class' => 'form-control refresh']) !!}
@@ -39,12 +44,6 @@
                       {!! Form::label('Tags', 'Select Tags') !!}
                       {!! Form::select('Tags', ['' => 'Select Hashtags']+$tags->pluck('name','id')->toArray(), null, ['id' => 'tag', 'class' => 'form-control refresh']) !!}
                   </div>
-
-
-                    <div class="form-group col-md-2">
-                        {!! Form::label('to_date', 'To Date') !!}
-                        {!! Form::date('query[to_date]', (!is_null($query)) ? $query['to_date'] : null, ['id' => 'to_date', 'class' => 'form-control refresh']) !!}
-                    </div>
                     <div class="form-group col-md-2" style="margin-top: 30px;">
                         <a type="button" class="btn btn-success text-white" id="submit-search">Filter</a>
                         <a type="button" class="btn btn-success text-white" id="clear-filter">Clear</a>

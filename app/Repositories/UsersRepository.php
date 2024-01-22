@@ -17,6 +17,14 @@ class UsersRepository
         })->get();
         return $users;
     }
+
+    public function getAllLeaders()
+    {
+        $users = User::whereHas('roles', function ($role) {
+            $role->where('name', 'Leader');
+        })->get();
+        return $users;
+    }
     public function countUsers()
     {
         return User::count();
@@ -105,5 +113,20 @@ class UsersRepository
         ]);
         $user->assignRole('User');
         return $user;
+    }
+
+    public function deleteLeader($request)
+    {
+        $admin = User::find($request['id']);
+        $admin->syncRoles(['User']);
+        return true;
+    }
+
+    public function getLeadersIds()
+    {
+        $Leaders  = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Leader');
+        })->pluck('id');
+        return $Leaders;
     }
 }

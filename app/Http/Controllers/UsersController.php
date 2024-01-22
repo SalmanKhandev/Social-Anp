@@ -36,7 +36,7 @@ class UsersController extends Controller
     {
         $users = User::withWhereHas('roles', function ($role) {
             $role->where('name', 'User');
-        })->with('userAccounts.platform')->paginate(50);
+        })->with('userAccounts.platform')->paginate(10);
         return view('users.index', ['users' => $users]);
     }
 
@@ -166,5 +166,27 @@ class UsersController extends Controller
         if ($assignRole) {
             return response()->json(['success' => true, 'message' => 'Admin Role Assign to this User  successfully']);
         }
+    }
+
+    public function assignLeaderRole(Request $request)
+    {
+        $user = $this->UsersRepository->findUserById($request->user_id);
+        $assignRole = $user->syncRoles(['Leader']);
+        if ($assignRole) {
+            return response()->json(['success' => true, 'message' => 'Leader Role Assign to this User  successfully']);
+        }
+    }
+
+
+    public function listLeaders()
+    {
+        $leaders = $this->UsersRepository->getAllLeaders();
+        return view("leaders.index", compact('leaders'));
+    }
+
+    public function deleteLeader(Request $request)
+    {
+        $deleteLeader = $this->UsersRepository->deleteLeader($request);
+        return response()->json(['success' => true, 'message' => 'Leader deleted successfully']);
     }
 }

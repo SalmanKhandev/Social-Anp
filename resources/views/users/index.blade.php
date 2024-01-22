@@ -61,6 +61,42 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+/* Add custom styles for pagination */
+.pagination {
+    margin-top: 20px; /* Adjust as needed */
+    display: flex;
+    justify-content: flex-end; /* Align pagination to the right */
+}
+
+.pagination .page-item {
+    margin-left: 10px; /* Adjust spacing between pagination items */
+}
+
+.pagination .page-item .page-link {
+    color: #ffffff; /* Text color for pagination links */
+    background-color: #007bff; /* Background color for pagination links */
+    border: 1px solid #007bff; /* Border color for pagination links */
+    padding: 8px 16px; /* Padding for pagination links */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #0056b3; /* Darker background color on hover */
+    border-color: #0056b3; /* Darker border color on hover */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0056b3; /* Active link background color */
+    border-color: #0056b3; /* Active link border color */
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Disabled link text color */
+    background-color: #f8f9fa; /* Disabled link background color */
+    border-color: #dee2e6; /* Disabled link border color */
+}
+
 </style>
 @endsection
 
@@ -121,7 +157,9 @@ input:checked + .slider:before {
 
                     </td>
                     <td>
-                            <a href="#" class="btn btn-icon icon-left btn-dark assign-role" data-id={{$user->id}}><i class="far fa-user"></i> Make as Admin</a>
+                            <a href="#" class="btn btn-icon icon-left btn-dark assign-role" data-id={{$user->id}}><i class="far fa-user"></i> Admin</a>
+                            <a href="#" class="btn btn-icon icon-left btn-dark make-leader" data-id={{$user->id}}><i class="far fa-user"></i>Leader</a>
+
                     </td>
                     <td>
                        <a href="#" data-toggle="modal" data-target="#editModal" class="btn btn-icon btn-primary edit-btn " ><i class="far fa-edit"></i></a>
@@ -133,24 +171,12 @@ input:checked + .slider:before {
             @endforeach
 
                 </table>
+             {{ $users->links('users.vendor.custom') }}
+
+
             </div>
             </div>
-            <div class="card-footer text-right">
-            <nav class="d-inline-block">
-                <ul class="pagination mb-0">
-                
-                <li class="page-item active"><a class="page-link" href="#">1 <span
-                        class="sr-only">(current)</span></a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
-                </li>
-                </ul>
-            </nav>
-            </div>
+  
         </div>
         </div>
     </div>
@@ -373,8 +399,8 @@ $(document).ready(function(){
 
 
 
-
-     $(".assign-role").click(function(){
+// Assing Role 
+$(".assign-role").click(function(){
     console.log("Clicked");
     var id=$(this).data('id');
     var url='{{ route("user.assignAdminRole") }}';
@@ -411,6 +437,45 @@ $(document).ready(function(){
 
   });
 
+
+
+  // Make Leader Role 
+$(".make-leader").click(function(){
+    console.log("Clicked");
+    var id=$(this).data('id');
+    var url='{{ route("user.assignLeaderRole") }}';
+    Swal.fire({
+    title: 'Are You Sure ?',
+    text: "You want to Assign Leader Role to this User",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+    cancelButtonText:'Cancel',
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+        type: 'POST',
+        url: url,
+        data: {user_id:id},
+        success: function(response)
+        {
+            console.log(response);
+            if(response.success){
+                showSwalMessage('success', 'Success', response.message)
+                 setTimeout(function(){
+                    location.reload(true)
+                }, 3000);
+            }else{
+                showSwalMessage('error', "Error", "{{__('lang.Something went Wrong! please try again!')}}")
+            }
+        }
+    });
+    }
+});
+
+  });
 });
 
 
