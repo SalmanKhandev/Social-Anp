@@ -103,6 +103,7 @@
                       <option value="">Select District</option>
                       <option value="ABBOTTABAD">ABBOTTABAD</option>
                       <option value="BAJAUR">BAJAUR</option>
+                      <option value="BANNU">BANNU</option>
                       <option value="BATAGRAM">BATAGRAM</option>
                       <option value="BUNER">BUNER</option>
                       <option value="CHARSDADDA">CHARSDADDA</option>
@@ -117,7 +118,6 @@
                       <option value="LAKKI MARWAT">LAKKI MARWAT</option>
                       <option value="LOWER CHITRAL">LOWER CHITRAL</option>
                       <option value="LOWER DIR">LOWER DIR</option>
-                      <option value="LOWER KOHISTAN">LOWER KOHISTAN</option>
                       <option value="MALAKAND">MALAKAND</option>
                       <option value="MARDAN">MARDAN</option>
                       <option value="MANSEHRA">MANSEHRA</option>
@@ -134,7 +134,8 @@
                       <option value="UPPER CHITRAL">UPPER CHITRAL</option>
                       <option value="UPPER DIR">UPPER DIR</option>
                       <option value="UPPER KOHISTAN">UPPER KOHISTAN</option>
-                      <option value="UPPER SWAT">UPPER SWAT</option>
+                      <option value="FATA">FATA</option>
+            
                   </select>
                        @error('district')
                             <span class="text-danger">{{ $message }}</span>

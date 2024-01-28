@@ -104,6 +104,8 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get("/user_tweets", [TwitterController::class, "userTwitterTweets"])->name("name.twitter.tweets");
     Route::get("/twitter_trends", [TwitterController::class, "twitterTrends"])->name("twitter.trends");
     Route::get('/trending_tags', [TwitterController::class, 'getTrendingTags'])->name('trending.getTrendingTags');
+    Route::post('/user_tweets', [TwitterController::class, 'userTweets'])->name('user.twitter.tweets');
+    Route::post('/retweet_queue', [TwitterController::class, 'retweetQueue'])->name('twitter.retweetQueue');
     Route::get("/twitter", [PostsController::class, "twitterPosts"])->name("twitter.posts");
     Route::get("/instagram", [PostsController::class, "instagramPosts"])->name("instagram.posts");
     Route::get("/sync", [PostsController::class, "syncPosts"])->name("dashboard.posts.sync");

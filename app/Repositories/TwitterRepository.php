@@ -9,6 +9,7 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use App\Models\Setting;
 use App\Models\Platform;
+use App\Models\RetweetQueue;
 use App\Models\TagRetweet;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Http;
@@ -61,6 +62,7 @@ class TwitterRepository
     {
         $response = $this->getUserTweets($userId, $queryParams);
         $data = $response->json();
+        dd($data);
         if (isset($data['data'])) {
             $tweets = array_merge($tweets, $data['data']);
         }
@@ -71,6 +73,7 @@ class TwitterRepository
             $queryParams['pagination_token'] = $nextToken;
             $tweets = $this->fetchUserTweets($userId, $queryParams, $tweets);
         }
+
 
         return $tweets;
     }
@@ -124,7 +127,7 @@ class TwitterRepository
                 ->take($limit)
                 ->get()
                 ->pluck('userAccounts')
-                ->flatten();;
+                ->flatten();
             foreach ($allUsers as $user) {
                 // $userPosts = (new TwitterRepository)->getTweetsToday($user->username, $user->user->created_at);
                 $userPosts = (new TwitterRepository)->retrieveUserTweets($user->username, $user->user->created_at);
@@ -148,7 +151,7 @@ class TwitterRepository
             Setting::create(['sync_date' => Carbon::now()]);
             return (object) ['status' => true, 'message' => 'Tweets retrieved Succesffully'];
         } catch (\Throwable $th) {
-            return (object) ['status' => false, 'message' => $th->getMessage()];
+            return (object) ['status' => false, 'message' => $th->getMessage() . "at line" . $th->getLine()];
         }
     }
 
@@ -197,6 +200,10 @@ class TwitterRepository
         $endDate = $request->end_date;
         $tagId = $request->tag_id;
 
+        if (empty($fromDate) && empty($endDate) && empty($tagId)) {
+            return [];
+        }
+
         $query->when(!empty($request->tag_id), function ($query) use ($tagId) {
             $query->whereHas('posts.tags', function ($query) use ($tagId) {
                 $query->where('id', $tagId);
@@ -221,24 +228,44 @@ class TwitterRepository
                     });
                 }
             }
-        ])->withCount('retweets')->having('posts_count', '>', 0)->get();
+        ])->withCount(['retweets' => function ($query) use ($tagId) {
+            $query->where('tag_id', $tagId);
+        }])->having('posts_count', '>', 0)->get();
 
         return $users;
     }
 
     public function retweets()
     {
-        $leadersTweets = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Leader');
-        })->with('posts')->get()->pluck('posts')->flatten();
+        $tweetsInQueue = RetweetQueue::where('completed', false)->first();
+        $countTotalUsers =
+            User::whereHas('roles', function ($role) {
+                $role->where('name', 'User');
+            })->withWhereHas('userAccounts', function ($query) {
+                $query->where('platform_id', Platform::$TWITTER);
+            })->take(20)->get()->pluck('userAccounts')
+            ->flatten();
 
-        foreach ($leadersTweets as $tweet) {
 
-            $users = UserAccount::where('platform_id', Platform::$TWITTER)->get();
+        if ($tweetsInQueue) {
+            $TagRetweet = TagRetweet::where('post_id', $tweetsInQueue->post_id)->pluck('user_id');
+            $users = User::whereHas('roles', function ($role) {
+                $role->where('name', 'User');
+            })->withWhereHas('userAccounts', function ($query) {
+                $query->where('platform_id', Platform::$TWITTER);
+            })->whereNotIn('id', $TagRetweet)->take(20)->get()->pluck('userAccounts')
+                ->flatten();
+
+            $totalUsersToRetweet = count($countTotalUsers);
+            $retweetedUsers = count($TagRetweet);
+            $remaining = $totalUsersToRetweet - $retweetedUsers;
+
 
             foreach ($users as $user) {
                 // Replace these values with your actual Twitter API credentials
 
+                $consumerKey = env('TWITTER_CLIENT_ID');
+                $consumerSecret = env('TWITTER_CLIENT_SECRET');
                 $accessToken = $user->access_token;
                 $accessTokenSecret = $user->token_secret;
 
@@ -278,33 +305,128 @@ class TwitterRepository
                             'Content-Type' => 'application/json',
                         ],
                         'json' => [
-                            'tweet_id' => $tweet->post_id,
+                            'tweet_id' => $tweetsInQueue->tweet_id,
                         ],
                     ]);
 
                     $responseData = json_decode($response->getBody());
-                    if (count($tweet->tags) > 0) {
-                        foreach ($tweet->tags as $tag) {
-                            TagRetweet::updateOrCreate([
-                                'post_id' => $tweet->id,
-                                'user_id' => $tweet->user_id,
-                                'tag_id' => $tag->id
-                            ]);
-                        }
-                    } else {
-                        TagRetweet::updateOrCreate(
-                            ['post_id' => $tweet->id, 'user_id' => $tweet->user_id],
-                            ['post_id' => $tweet->id, 'user_id' => $tweet->user_id]
-                        );
-                    }
+                    TagRetweet::updateOrCreate(
+                        ['post_id' => $tweetsInQueue->post_id, 'user_id' => $user->user_id],
+                        ['post_id' => $tweetsInQueue->post_id, 'user_id' => $user->user_id]
+                    );
                 } catch (\Throwable $th) {
-                    if ($th->getCode() == 429) {
-                        break;
-                    }
-
                     continue;
                 }
             }
+
+            if ($remaining == 0) {
+                $tweetsInQueue->completed = true;
+                $tweetsInQueue->save();
+            }
+        }
+
+        // $leadersTweets = User::whereHas('roles', function ($query) {
+        //     $query->where('name', 'Leader');
+        // })->with('posts')->get()->pluck('posts')->flatten();
+
+        // foreach ($leadersTweets as $tweet) {
+
+        //     $users = UserAccount::where('platform_id', Platform::$TWITTER)->get();
+
+        //     foreach ($users as $user) {
+        //         // Replace these values with your actual Twitter API credentials
+
+        //         $consumerKey = env('TWITTER_CLIENT_ID');
+        //         $consumerSecret = env('TWITTER_CLIENT_SECRET');
+        //         $accessToken = $user->access_token;
+        //         $accessTokenSecret = $user->token_secret;
+
+        //         // Twitter API endpoint
+        //         $url = "https://api.twitter.com/2/users/" . $user->username . "/retweets";
+
+        //         try {
+        //             // OAuth parameters
+        //             $oauth = [
+        //                 'oauth_consumer_key' => $consumerKey,
+        //                 'oauth_nonce' => uniqid(),
+        //                 'oauth_signature_method' => 'HMAC-SHA1',
+        //                 'oauth_timestamp' => time(),
+        //                 'oauth_token' => $accessToken,
+        //                 'oauth_version' => '1.0',
+        //             ];
+
+        //             // Generate the base string
+        //             $baseString = 'POST&' . rawurlencode($url) . '&' . rawurlencode(http_build_query($oauth));
+
+        //             // Generate the signing key
+        //             $signingKey = rawurlencode($consumerSecret) . '&' . rawurlencode($accessTokenSecret);
+
+        //             // Generate the signature
+        //             $oauth['oauth_signature'] = base64_encode(hash_hmac('sha1', $baseString, $signingKey, true));
+
+        //             // Construct the Authorization header
+        //             $authHeader = 'OAuth ' . implode(', ', array_map(function ($v, $k) {
+        //                 return sprintf('%s="%s"', $k, rawurlencode($v));
+        //             }, $oauth, array_keys($oauth)));
+
+        //             $client = new Client();
+
+        //             $response = $client->post($url, [
+        //                 'headers' => [
+        //                     'Authorization' => $authHeader,
+        //                     'Content-Type' => 'application/json',
+        //                 ],
+        //                 'json' => [
+        //                     'tweet_id' => $tweet->post_id,
+        //                 ],
+        //             ]);
+
+        //             $responseData = json_decode($response->getBody());
+        //             if (count($tweet->tags) > 0) {
+        //                 foreach ($tweet->tags as $tag) {
+        //                     TagRetweet::updateOrCreate([
+        //                         'post_id' => $tweet->id,
+        //                         'user_id' => $tweet->user_id,
+        //                         'tag_id' => $tag->id
+        //                     ]);
+        //                 }
+        //             } else {
+        //                 TagRetweet::updateOrCreate(
+        //                     ['post_id' => $tweet->id, 'user_id' => $tweet->user_id],
+        //                     ['post_id' => $tweet->id, 'user_id' => $tweet->user_id]
+        //                 );
+        //             }
+        //         } catch (\Throwable $th) {
+        //             if ($th->getCode() == 429) {
+        //                 dd($th->getMessage());
+        //             }
+
+        //             continue;
+        //         }
+        //     }
+        // }
+    }
+
+    public function userLatestTweets($request)
+    {
+        return  Post::whereHas('user.userAccounts', function ($query) {
+            $query->where('platform_id', Platform::$TWITTER);
+        })->where('user_id', $request->user_id)->latest()->get();
+    }
+
+    public function addToQueue($request)
+    {
+        $retweetQueueExists =  RetweetQueue::where('post_id', $request->post_id)
+            ->where('tweet_id', $request->tweet_id)
+            ->first();
+        if ($retweetQueueExists) {
+            return (object) ['success' => false, 'message' => 'Tweet Already in Queue'];
+        } else {
+            $addToQueue = RetweetQueue::create([
+                'post_id' => $request->post_id,
+                'tweet_id' => $request->tweet_id
+            ]);
+            return (object) ['success' => true, 'message' => 'Tweet added to Queue successfully'];
         }
     }
 }

@@ -79,8 +79,8 @@
 
                 "columns": [
                     {
-                     "name":"serial_number",
-                     "data":"serial_number",
+                     "name":"id",
+                     "data":"id",
                     },
                     {
                      "name":"name",
@@ -94,7 +94,11 @@
                         "name":"retweets_count",
                         "data":"retweets_count"
                     }
-                ],
+                ], 
+                "rowCallback": function(row, data, index) {
+            // Get the first cell (td:eq(0)) in the current row and set its content to the row index + 1
+            $('td:eq(0)', row).text(index + 1);
+        },
                "order": [[ 2, "desc" ]],
                 responsive: true,
                 processing: true,
@@ -115,6 +119,14 @@
             $('.refresh').val('');
             $('#trending-tags-table').DataTable().draw(true);
         });
+
+          // Debugging: Log the serial_number values to the console
+    $('#trending-tags-table').on('order.dt', function () {
+        var data = $('#trending-tags-table').DataTable().rows().data();
+        data.each(function (value, index) {
+            console.log(value.serial_number);
+        });
+    });
 
         });
     </script>

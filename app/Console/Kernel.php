@@ -12,8 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('sync-facebook-daily')->everyMinute();
-        $schedule->command('posts-deletion')->everyDay();
+        // $schedule->command('sync-facebook-daily')->everyMinute();
+        // $schedule->command('posts-deletion')->everyDay();
+        $schedule->command('synchronize-tweeets.php')->everyMinute();
+        $schedule->command('retweet')->hourly();
     }
 
     /**

@@ -95,7 +95,7 @@ input:checked + .slider:before {
                 @php
                     $index ++;
                 @endphp
-                <tr data-admin="{{$leader}}">
+                <tr data-leader="{{$leader}}">
                     <td>{{$leader->name}}</td>
                     <td>{{$leader->email}}</td>
                     <td>Leader</td>
@@ -103,9 +103,15 @@ input:checked + .slider:before {
                    <div class="buttons">
                       <a href="#" data-toggle="modal" data-target="#editModal"  class="btn btn-icon edit-btn btn-primary"><i class="far fa-edit"></i></a>
                       <a href="#" data-id={{$leader->id}} class="btn btn-icon delete-admin btn-danger"><i class="fas fa-times"></i></a>
+                      <a href="#" data-toggle="modal" data-target="#retweetsModal"  class="btn btn-icon twitter-btn btn-dark"><i data-feather="twitter"></i></a>
+
                     </div>
-                    </td>     
+                    
+                    </td> 
+                     
                 </tr>
+
+          
 
             @endforeach
 
@@ -192,10 +198,41 @@ input:checked + .slider:before {
           </div>
         </div>
 
-
-
          <!-- Modal with form -->
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="formModal"
+        <div class="modal fade bd-example-modal-lg " id="retweetsModal" tabindex="-1" role="dialog" aria-labelledby="formModal"
+          aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="formModal">Leader Tweets</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div style="height: 600px; overflow-y: auto;">
+                       <table id="tweetsTable" class=" table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                <th scope="col">Sr #</th>
+                                <th scope="col">post_id</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Retweet</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+
+                            
+                            </tbody>
+                            </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      <div class="modal fade" id="tweetsModal" tabindex="-1" role="dialog" aria-labelledby="formModal"
           aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -245,6 +282,7 @@ input:checked + .slider:before {
                     </div>
                   </div>
                   <button type="submit" class="btn btn-primary edit-admin m-t-15 waves-effect">Create Admin</button>
+                  
                 </form>
               </div>
             </div>
@@ -392,11 +430,75 @@ $(document).ready(function(){
 
 
  $(".edit-btn").click(function(){
-    var admin= $(this).closest('tr').data('admin');
-    $("#edit-name").val(admin.name);
-    $("#edit-email").val(admin.email);
-    $("#user_id").val(admin.id);
+    var leader= $(this).closest('tr').data('leader');
+    $("#edit-name").val(leader.name);
+    $("#edit-email").val(leader.email);
+    $("#user_id").val(leader.id);
  });
+
+
+$(".twitter-btn").click(function(){
+      var leader= $(this).closest('tr').data('leader');
+      var url = "{{route('user.twitter.tweets')}}";
+      console.log('clicked');
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: {user_id:leader.id},
+        success: function(response)
+        {
+            $('#tweetsTable tbody').empty();
+
+            // Iterate over the response data and append rows to the table
+            response.forEach(function(tweet,index) {
+               index = index + 1;
+               var content = JSON.parse(tweet.content);
+               var text = content.text || '';
+                var row = '<tr><td>' + index + '</td><td>' + tweet.post_id + '</td><td>'+text+'</td><td>'+`<button  data-post_id=${tweet.id}  data-tweet_id=${tweet.post_id} class="btn btn-icon twitter-repost btn-dark"><i data-feather="twitter"></i>Repost</button>` +'</tr>';
+                $('#tweetsTable tbody').append(row);
+            });
+        },
+        error:function(error){
+          console.log(error);
+        }
+    });
+});
+
+
+$(document).on('click', '.twitter-repost', function(e) {
+    e.preventDefault();
+    var post_id = $(this).data('post_id');
+    var tweet_id = $(this).data('tweet_id');   
+    var url = "{{route('twitter.retweetQueue')}}"; 
+
+    Swal.fire({
+    title: 'Are You Sure ?',
+    text: "You want to Retweet This Tweet?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+    cancelButtonText:'Cancel',
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+        type: 'POST',
+        url: url,
+        data: {post_id,tweet_id},
+        success: function(response)
+        {
+            if(response.success){
+                showSwalMessage('success', 'Success', response.message)
+                $("#retweetsModal").modal('hide');
+            }else{
+                showSwalMessage('error', "Error", response.message)
+            }
+        }
+    });
+    }
+});
+});
 
 });
 

@@ -52,7 +52,7 @@
              <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="syncTwitterLeaders" type="button">
               
             <i class="fas fa-sync"></i>Sync Leaders Tweets </a>
-             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="synctwitter" type="button">
+             <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm syncTwitter" type="button">
               
             <i class="fas fa-sync"></i>Twitter </a>
              <a href="#"  class="btn btn-icon icon-left btn-primary rounded-sm" id="" type="button">
@@ -408,7 +408,8 @@
 
 
 // Sync Twitter Tweets 
-$("#syncTwitter").click(function(){
+$(".syncTwitter").click(function(){
+console.log("done");
     var url='{{ route("sync.twitter.tweets") }}';
     Swal.fire({
     title: 'Are You Sure ?',
@@ -438,9 +439,9 @@ $("#syncTwitter").click(function(){
         },
         complete: function () {
             hideLoader()
-             setTimeout(function(){
-               location.reload(true)
-              }, 3000);
+            //  setTimeout(function(){
+            //    location.reload(true)
+            //   }, 3000);
         },
     });
     }

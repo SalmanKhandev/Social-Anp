@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\TwitterRepository;
 use Illuminate\Console\Command;
+use App\Repositories\SyncRepository;
+use App\Repositories\TwitterRepository;
 
 class SynchronizeTweeets extends Command
 {
@@ -26,7 +27,7 @@ class SynchronizeTweeets extends Command
      */
     public function handle()
     {
-        $syncTwitter = (new TwitterRepository)->runTwitterJobs();
+        $retweets = (new SyncRepository)->syncTwitter();
         $this->info('Retrived Twitter tweets  Successfully');
     }
 }

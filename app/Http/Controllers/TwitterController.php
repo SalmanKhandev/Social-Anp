@@ -118,9 +118,7 @@ class TwitterController extends Controller
     {
         $trendingTweets = (new TwitterRepository)->filterTwitterTrends($request);
         return DataTables::of($trendingTweets)->addColumn('serial_number', function ($tweet) {
-            static $counter = 0;
-            $counter++;
-            return $counter;
+            return $tweet->DT_RowIndex + 1;
         })->make(true);
     }
 
@@ -153,5 +151,17 @@ class TwitterController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage() . " at " . $th->getLine()]);
         }
+    }
+
+    public function userTweets(Request $request)
+    {
+        $tweets =  $this->twitterRepository->userLatestTweets($request);
+        return $tweets;
+    }
+
+    public function retweetQueue(Request $request)
+    {
+        $retweetInQueue = $this->twitterRepository->addToQueue($request);
+        return $retweetInQueue;
     }
 }
